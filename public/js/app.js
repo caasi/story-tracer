@@ -5,9 +5,11 @@ App = Ember.Application.create({});
 App.ApplicationView = Ember.View.extend({
   classNames: ["app"],
   mouseUp: function(e) {
-    App.movingView.original.mouse = null;
-    App.movingView.original.window = null;
-    App.movingView = null;
+    if (App.movingView) {
+      App.movingView.original.mouse = null;
+      App.movingView.original.window = null;
+      App.movingView = null;
+    }
   },
   mouseMove: function(e) {
     if (App.movingView) {
@@ -51,6 +53,40 @@ App.StoryView = Ember.View.extend({
   original: {
     mouse: null,
     window: null
+  }
+});
+
+App.Relationcontroller = Ember.ObjectController.extend({});
+App.register("controller:relation", App.Relationcontroller, { singleton: false });
+
+App.RelationView = Ember.View.extend({
+  tagName: "canvas",
+  classNames: ["relation"],
+  lineWidth: 5,
+  update: function() {
+    var canvas = this.get("element"),
+        ctx = canvas.getContext("2d"),
+        x = this.get("controller.model.dest.position.x"),
+        y = this.get("controller.model.dest.position.y");
+
+    canvas.width = x + 2 * this.lineWidth;
+    canvas.height = y + 2 * this.lineWidth;
+
+    ctx.strokeStyle = "#ff0000";
+    ctx.lineWidth = this.lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(this.lineWidth, this.lineWidth);
+    ctx.lineTo(this.lineWidth + x, this.lineWidth + y);
+    ctx.stroke();
+  },
+  didInsertElement: function() {
+    this.$()
+      .css("top", -this.lineWidth + "px")
+      .css("left", -this.lineWidth + "px");
+
+    this.update();
+    this.addObserver("controller.model.dest.position.x", this.update);
+    this.addObserver("controller.model.dest.position.y", this.update);
   }
 });
 

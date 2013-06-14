@@ -36,3 +36,9 @@ body {
 .story p {
   margin: 1em;
 }
+
+.relation {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

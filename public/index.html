@@ -12,6 +12,7 @@
         <p>{{p}}</p>
       {{/each}}
       {{#each link in links}}
+        {{control "relation" link}}
         {{control "story" link.dest}}
       {{/each}}
     </script>
