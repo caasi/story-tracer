@@ -67,25 +67,48 @@ App.RelationView = Ember.View.extend({
     var canvas = this.get("element"),
         ctx = canvas.getContext("2d"),
         x = this.get("controller.model.dest.position.x"),
-        y = this.get("controller.model.dest.position.y");
+        y = this.get("controller.model.dest.position.y"),
+        pos = {},
+        start = {},
+        end = {};
 
-    canvas.width = x + 2 * this.lineWidth;
-    canvas.height = y + 2 * this.lineWidth;
+    canvas.width = Math.abs(x) + 2 * this.lineWidth;
+    canvas.height = Math.abs(y) + 2 * this.lineWidth;
+
+    if (x >= 0) {
+      pos.x =  -this.lineWidth;
+      start.x = this.lineWidth;
+      end.x = x + this.lineWidth;
+    } else {
+      pos.x = x - this.lineWidth;
+      start.x = -pos.x;
+      end.x = this.lineWidth;
+    }
+
+    if (y >= 0) {
+      pos.y = -this.lineWidth;
+      start.y = this.lineWidth;
+      end.y = y + this.lineWidth;
+    } else {
+      pos.y = y - this.lineWidth;
+      start.y = -pos.y;
+      end.y = this.lineWidth;
+    }
+
+    this.$()
+      .css("left", pos.x + "px")
+      .css("top", pos.y + "px");
 
     ctx.strokeStyle = "#ff0000";
     ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
-    ctx.moveTo(this.lineWidth, this.lineWidth);
-    ctx.lineTo(this.lineWidth + x, this.lineWidth + y);
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
     ctx.stroke();
   },
   didInsertElement: function() {
-    this.$()
-      .css("top", -this.lineWidth + "px")
-      .css("left", -this.lineWidth + "px");
-
     this.update();
-    this.addObserver("controller.model.dest.position.x", this.update);
+    this.addObserver("controller.model.dest.position", this.update);
     this.addObserver("controller.model.dest.position.y", this.update);
   }
 });
