@@ -63,47 +63,82 @@ App.RelationView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["relation"],
   lineWidth: 5,
+  canvasSpaceFromPoints: function(src, dest, margin) {
+    var vector,
+        abs,
+        size,
+        origin,
+        start,
+        end;
+    
+    margin = margin || { x: this.lineWidth, y: this.lineWidth };
+    vector = {
+      x: dest.x - src.x,
+      y: dest.y - src.y
+    };
+    abs = {
+      x: Math.abs(vector.x),
+      y: Math.abs(vector.y)
+    };
+    size = {
+      width: abs.x + 2 * margin.x,
+      height: abs.y + 2 * margin.y
+    };
+    origin = {
+      x: vector.x >= 0 ? src.x - margin.x : dest.x - margin.x,
+      y: vector.y >= 0 ? src.y - margin.y : dest.y - margin.y
+    };
+    start = {
+      x: margin.x,
+      y: margin.y
+    };
+    end = {
+      x: abs.x + margin.x,
+      y: abs.y + margin.y
+    };
+
+    return {
+      origin: origin,
+      size: size,
+      start: {
+        x: vector.y >= 0 ? start.x : end.x,
+        y: vector.x >= 0 ? start.y: end.y
+      },
+      end: {
+        x: vector.y >= 0 ? end.x : start.x,
+        y: vector.x >= 0 ? end.y : start.y
+      }
+    };
+  },
   update: function() {
     var canvas = this.get("element"),
         ctx = canvas.getContext("2d"),
         x = this.get("controller.model.dest.position.x"),
         y = this.get("controller.model.dest.position.y"),
-        pos = {},
-        start = {},
-        end = {};
+        width = this.get("controller.model.dest.size.width"),
+        height = this.get("controller.model.dest.size.height"),
+        space;
 
-    canvas.width = Math.abs(x) + 2 * this.lineWidth;
-    canvas.height = Math.abs(y) + 2 * this.lineWidth;
+    space = this.canvasSpaceFromPoints(
+      { x: 0, y: 0},
+      {
+        x: x + 0.5 * width,
+        y: y + 0.5 * height
+      }
+    );
 
-    if (x >= 0) {
-      pos.x =  -this.lineWidth;
-      start.x = this.lineWidth;
-      end.x = x + this.lineWidth;
-    } else {
-      pos.x = x - this.lineWidth;
-      start.x = -pos.x;
-      end.x = this.lineWidth;
-    }
-
-    if (y >= 0) {
-      pos.y = -this.lineWidth;
-      start.y = this.lineWidth;
-      end.y = y + this.lineWidth;
-    } else {
-      pos.y = y - this.lineWidth;
-      start.y = -pos.y;
-      end.y = this.lineWidth;
-    }
+    canvas.width = space.size.width;
+    canvas.height = space.size.height;
 
     this.$()
-      .css("left", pos.x + "px")
-      .css("top", pos.y + "px");
+      .css("left", space.origin.x + "px")
+      .css("top", space.origin.y + "px");
 
     ctx.strokeStyle = "#ff0000";
     ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
-    ctx.moveTo(start.x, start.y);
-    ctx.lineTo(end.x, end.y);
+    ctx.moveTo(space.start.x, space.start.y);
+    ctx.lineTo(space.end.x, space.end.y);
     ctx.stroke();
   },
   didInsertElement: function() {
@@ -117,8 +152,12 @@ App.set(
   "storyRoot",
   {
     position: {
-      x: 0,
-      y: 0
+      x: 700,
+      y: 300
+    },
+    size: {
+      width: 300,
+      height: 450
     },
     title: "the First",
     contents: [
@@ -132,8 +171,12 @@ App.set(
         range: { from: 0, to: 2 },
         dest: {
           position: {
-            x: 100,
-            y: 200
+            x: -600,
+            y: 100
+          },
+          size: {
+            width: 300,
+            height: 450
           },
           title: "the Second",
           contents: [
@@ -148,8 +191,12 @@ App.set(
         range: { from: 0, to: 2 },
         dest: {
           position: {
-            x: 200,
-            y: 300
+            x: -500,
+            y: -300
+          },
+          size: {
+            width: 300,
+            height: 450
           },
           title: "the Third",
           contents: [
