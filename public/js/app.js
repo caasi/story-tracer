@@ -56,6 +56,30 @@ App.StoryView = Ember.View.extend({
   }
 });
 
+/**
+ * Note
+ **
+ * if I use {{#each p in contents}} to wrap this helper,
+ * I will get "p" as the path, but I can not get the string by
+ * using Ember.get(this, path);
+ */ 
+Ember.Handlebars.registerHelper("relation", function(path, options) {
+  var p, ret;
+
+  p = Ember.get(this, path);
+  ret = p.text.slice();
+
+  p.links.forEach(function(link, index) {
+    var subString = p.text.substring(link.range.from, link.range.to);
+    ret = ret.replace(
+      subString,
+      "<span class=\"relation-source relation-" + index + "\">" + subString + "</span>"
+    );
+  });
+
+  return new Handlebars.SafeString(ret);
+});
+
 App.Relationcontroller = Ember.ObjectController.extend({});
 App.register("controller:relation", App.Relationcontroller, { singleton: false });
 
@@ -142,6 +166,9 @@ App.RelationView = Ember.View.extend({
     ctx.stroke();
   },
   didInsertElement: function() {
+    var parentView,
+        link;
+       
     this.update();
     this.addObserver("controller.model.dest.position", this.update);
     this.addObserver("controller.model.dest.position.y", this.update);
@@ -161,49 +188,63 @@ App.set(
     },
     title: "「沒5萬免存靠家裡」？戴勝益：期限3年",
     contents: [
-      "薪水低於五萬，到底要不要存？引發話題的王品董事長戴勝益，首度出面解釋，以自身創業為例子，戴勝益強調人脈帶給他的幫助，就連台積電董事長張忠謀，也相當認同，只是，戴勝益的快人快語，看在好友阿基師的眼中，倒是替他捏了把冷汗！阿基師 ：我相信他很後悔，年輕人不應該計較領多少K，要想說能給老闆多少K。",
-      "阿基師言語中，對好友的論調，不是很認同，不過倒是不斷勉勵新鮮人，不要計較剛開始領多少K，應該想想可以給老闆多少K，來增加自我價值。",
-      "教育部長出面對企業喊話，既然都要新鮮人,領五萬塊不要存，那是不是該提供相同薪資的工作，好讓他們，有充分的薪水，建立自己的社交生活！"
-    ],
-    links: [
       {
-        src: 0,
-        range: { from: 7, to: 13 },
-        dest: {
-          position: {
-            x: -600,
-            y: 100
+        text: "薪水低於五萬，到底要不要存？引發話題的王品董事長戴勝益，首度出面解釋，以自身創業為例子，戴勝益強調人脈帶給他的幫助，就連台積電董事長張忠謀，也相當認同，只是，戴勝益的快人快語，看在好友阿基師的眼中，倒是替他捏了把冷汗！阿基師 ：我相信他很後悔，年輕人不應該計較領多少K，要想說能給老闆多少K。",
+        links: [
+          {
+            range: { from: 7, to: 13 },
+            dest: {
+              position: {
+                x: -600,
+                y: 100
+              },
+              size: {
+                width: 300,
+                height: 450
+              },
+              title: "「月薪五萬說」爭議 戴勝益澄清",
+              contents: [
+                {
+                  text: "王品集團董事長戴勝益，之前到大學演講勉勵新鮮人，「月收入沒5萬，不要儲蓄」，「如果錢不夠，還可以向爸媽借2萬」，引發爭議，今天戴勝益出席活動澄清，並且舉自己為例，是要強調人脈重要性，而且不一定要跟爸媽借，就算28K也能充分利用。",
+                  links: []
+                },
+                {
+                  text: "從副總統吳敦義手中，接過服務業金牌獎，王品董事長戴勝益笑的好開心，不過，外界關心的，還是他之前語出驚人的說，畢業三年以內的新鮮人，如果月薪不到5萬，不要儲蓄，甚至可以伸手跟爸媽借。",
+                  links: []
+                }
+              ]
+            }
           },
-          size: {
-            width: 300,
-            height: 450
-          },
-          title: "「月薪五萬說」爭議 戴勝益澄清",
-          contents: [
-            "王品集團董事長戴勝益，之前到大學演講勉勵新鮮人，「月收入沒5萬，不要儲蓄」，「如果錢不夠，還可以向爸媽借2萬」，引發爭議，今天戴勝益出席活動澄清，並且舉自己為例，是要強調人脈重要性，而且不一定要跟爸媽借，就算28K也能充分利用。",
-            "從副總統吳敦義手中，接過服務業金牌獎，王品董事長戴勝益笑的好開心，不過，外界關心的，還是他之前語出驚人的說，畢業三年以內的新鮮人，如果月薪不到5萬，不要儲蓄，甚至可以伸手跟爸媽借。"
-          ],
-          links: []
-        }
+        ]
       },
       {
-        src: 1,
-        range: { from: 28, to: 34 },
-        dest: {
-          position: {
-            x: -500,
-            y: -300
-          },
-          size: {
-            width: 300,
-            height: 450
-          },
-          title: "有趣的看待戴勝益5萬說　徐旭東：最重要是增加國民所得",
-          contents: [
-            "王品集團董事長戴勝益日前在演講中表示，年輕人如果月薪不到5萬元，就不要存錢，一番話引來爭議後，他新增加條件是，3年內可以回家向父母拿，台積電董事長張忠謀支持不存錢但要投資自己，遠傳董事長徐旭東則是以「有趣的看待就好」來回應，但強調，「最重要的是要增加國民所得」。"
-          ],
-          links: []
-        }
+        text: "阿基師言語中，對好友的論調，不是很認同，不過倒是不斷勉勵新鮮人，不要計較剛開始領多少K，應該想想可以給老闆多少K，來增加自我價值。",
+        links: [
+          {
+            range: { from: 14, to: 19 },
+            dest: {
+              position: {
+                x: -500,
+                y: -300
+              },
+              size: {
+                width: 300,
+                height: 450
+              },
+              title: "有趣的看待戴勝益5萬說　徐旭東：最重要是增加國民所得",
+              contents: [
+                {
+                  text: "王品集團董事長戴勝益日前在演講中表示，年輕人如果月薪不到5萬元，就不要存錢，一番話引來爭議後，他新增加條件是，3年內可以回家向父母拿，台積電董事長張忠謀支持不存錢但要投資自己，遠傳董事長徐旭東則是以「有趣的看待就好」來回應，但強調，「最重要的是要增加國民所得」。",
+                  links: []
+                }
+              ],
+            }
+          }
+        ]
+      },
+      {
+        text: "教育部長出面對企業喊話，既然都要新鮮人,領五萬塊不要存，那是不是該提供相同薪資的工作，好讓他們，有充分的薪水，建立自己的社交生活！",
+        links: []
       }
     ]
   }

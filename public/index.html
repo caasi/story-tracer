@@ -8,12 +8,12 @@
   <body>
     <script type="text/x-handlebars" data-template-name="story">
       <h1>{{title}}</h1>
-      {{#each p in contents}}
-        <p>{{p}}</p>
-      {{/each}}
-      {{#each link in links}}
-        {{control "relation" link}}
-        {{control "story" link.dest}}
+      {{#each contents}}
+        <p>{{relation this}}</p>
+        {{#each link in links}}
+          {{control "relation" link}}
+          {{control "story" link.dest}}
+        {{/each}}
       {{/each}}
     </script>
     <script type="text/x-handlebars">
