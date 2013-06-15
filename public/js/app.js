@@ -73,7 +73,7 @@ Ember.Handlebars.registerHelper("relation", function(path, options) {
     var subString,
         newString;
     subString = p.text.substring(link.range.from, link.range.to);
-    newString = "<span class=\"relation-" + index + "\">" + subString.substring(0, 1) + "</span>" + subString.substring(1);
+    newString = "<span class=\"capital relation-" + index + "\">" + subString.substring(0, 1) + "</span>" + subString.substring(1);
     ret = ret.replace(
       subString,
       "<span class=\"relation-source\">" + newString + "</span>"
@@ -92,6 +92,7 @@ App.RelationView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["relation"],
   lineWidth: 5,
+  $parent: null,
   sourcePostion: null,
   canvasSpaceFromPoints: function(src, dest, margin) {
     var vector,
@@ -145,8 +146,8 @@ App.RelationView = Ember.View.extend({
         ctx = canvas.getContext("2d"),
         x = this.get("controller.model.dest.position.x"),
         y = this.get("controller.model.dest.position.y"),
-        width = this.get("controller.model.dest.size.width"),
-        height = this.get("controller.model.dest.size.height"),
+        width = this.$parent.find(".story").width(),
+        height = this.$parent.find(".story").height(),
         space;
 
     space = this.canvasSpaceFromPoints(
@@ -164,7 +165,7 @@ App.RelationView = Ember.View.extend({
       .css("left", space.origin.x + "px")
       .css("top", space.origin.y + "px");
 
-    ctx.strokeStyle = "#ff0000";
+    ctx.strokeStyle = "rgba(255, 0, 0, 0.66)";
     ctx.lineWidth = this.lineWidth;
     ctx.beginPath();
     ctx.moveTo(space.start.x, space.start.y);
@@ -173,21 +174,22 @@ App.RelationView = Ember.View.extend({
   },
   didInsertElement: function() {
     var id,
-        parentView,
         $relationSource,
+        parentPos,
         pos;
 
     id = this.get("controller.model.id");
-    parentView = this.get("parentView");
-    $relationSource = parentView.$(".relation-" + id);
+    this.$parent = this.get("parentView").$();
+    $relationSource = this.$parent.find(".relation-" + id);
     pos = $relationSource.position();
+    
     this.sourcePosition = {
       x: pos.left + 0.5 * $relationSource.width(),
       y: pos.top + 0.5 * $relationSource.height()
     };
-    
+
     this.update();
-    this.addObserver("controller.model.dest.position", this.update);
+    this.addObserver("controller.model.dest.position.x", this.update);
     this.addObserver("controller.model.dest.position.y", this.update);
   }
 });
@@ -197,7 +199,7 @@ App.set(
   {
     position: {
       x: 700,
-      y: 300
+      y: 150
     },
     size: {
       width: 300,
@@ -244,7 +246,7 @@ App.set(
             dest: {
               position: {
                 x: -500,
-                y: -300
+                y: -100
               },
               size: {
                 width: 300,
