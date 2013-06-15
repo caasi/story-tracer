@@ -9,11 +9,13 @@
     <script type="text/x-handlebars" data-template-name="story">
       <h1>{{title}}</h1>
       {{#each contents}}
-        <p>{{relation this}}</p>
-        {{#each link in links}}
-          {{control "relation" link}}
-          {{control "story" link.dest}}
-        {{/each}}
+        {{#view App.ParagraphView}}
+          {{#each link in links}}
+            {{control "relation" link}}
+            {{control "story" link.dest}}
+          {{/each}}
+          <p>{{relation this}}</p>
+        {{/view}}
       {{/each}}
     </script>
     <script type="text/x-handlebars">

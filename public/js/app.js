@@ -70,15 +70,20 @@ Ember.Handlebars.registerHelper("relation", function(path, options) {
   ret = p.text.slice();
 
   p.links.forEach(function(link, index) {
-    var subString = p.text.substring(link.range.from, link.range.to);
+    var subString,
+        newString;
+    subString = p.text.substring(link.range.from, link.range.to);
+    newString = "<span class=\"relation-" + index + "\">" + subString.substring(0, 1) + "</span>" + subString.substring(1);
     ret = ret.replace(
       subString,
-      "<span class=\"relation-source relation-" + index + "\">" + subString + "</span>"
+      "<span class=\"relation-source\">" + newString + "</span>"
     );
   });
 
   return new Handlebars.SafeString(ret);
 });
+
+App.ParagraphView = Ember.View.extend({});
 
 App.Relationcontroller = Ember.ObjectController.extend({});
 App.register("controller:relation", App.Relationcontroller, { singleton: false });
@@ -87,6 +92,7 @@ App.RelationView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["relation"],
   lineWidth: 5,
+  sourcePostion: null,
   canvasSpaceFromPoints: function(src, dest, margin) {
     var vector,
         abs,
@@ -144,7 +150,7 @@ App.RelationView = Ember.View.extend({
         space;
 
     space = this.canvasSpaceFromPoints(
-      { x: 0, y: 0},
+      this.sourcePosition,
       {
         x: x + 0.5 * width,
         y: y + 0.5 * height
@@ -166,9 +172,20 @@ App.RelationView = Ember.View.extend({
     ctx.stroke();
   },
   didInsertElement: function() {
-    var parentView,
-        link;
-       
+    var id,
+        parentView,
+        $relationSource,
+        pos;
+
+    id = this.get("controller.model.id");
+    parentView = this.get("parentView");
+    $relationSource = parentView.$(".relation-" + id);
+    pos = $relationSource.position();
+    this.sourcePosition = {
+      x: pos.left + 0.5 * $relationSource.width(),
+      y: pos.top + 0.5 * $relationSource.height()
+    };
+    
     this.update();
     this.addObserver("controller.model.dest.position", this.update);
     this.addObserver("controller.model.dest.position.y", this.update);
@@ -192,6 +209,7 @@ App.set(
         text: "薪水低於五萬，到底要不要存？引發話題的王品董事長戴勝益，首度出面解釋，以自身創業為例子，戴勝益強調人脈帶給他的幫助，就連台積電董事長張忠謀，也相當認同，只是，戴勝益的快人快語，看在好友阿基師的眼中，倒是替他捏了把冷汗！阿基師 ：我相信他很後悔，年輕人不應該計較領多少K，要想說能給老闆多少K。",
         links: [
           {
+            id: 0,
             range: { from: 7, to: 13 },
             dest: {
               position: {
@@ -221,6 +239,7 @@ App.set(
         text: "阿基師言語中，對好友的論調，不是很認同，不過倒是不斷勉勵新鮮人，不要計較剛開始領多少K，應該想想可以給老闆多少K，來增加自我價值。",
         links: [
           {
+            id: 0,
             range: { from: 14, to: 19 },
             dest: {
               position: {
