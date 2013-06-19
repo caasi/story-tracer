@@ -38,21 +38,30 @@ App.StoryView = Ember.View.extend({
     return "left: " + this.get("controller.model.position.x") + "px;" +
            "top: " + this.get("controller.model.position.y") + "px;";
   }.property("controller.model.position.x", "controller.model.position.y"),
-  mouseDown: function(e) {
-    e.stopPropagation();
-    App.movingView = this;
-    this.original.mouse = {
-      x: e.clientX,
-      y: e.clientY
-    };
-    this.original.window = {
-      x: this.get("controller.model.position.x"),
-      y: this.get("controller.model.position.y")
-    };
-  },
   original: {
     mouse: null,
     window: null
+  }
+});
+
+App.TitleView = Ember.View.extend({
+  tagName: "h1",
+  mouseDown:function(e) {
+    var parentView = this.get("parentView");
+
+    e.stopPropagation();
+
+    App.movingView = parentView;
+
+    parentView.original.mouse = {
+      x: e.clientX,
+      y: e.clientY
+    };
+
+    parentView.original.window = {
+      x: parentView.get("controller.model.position.x"),
+      y: parentView.get("controller.model.position.y")
+    };
   }
 });
 
@@ -85,8 +94,14 @@ Ember.Handlebars.registerHelper("relation", function(path, options) {
 
 App.ParagraphView = Ember.View.extend({});
 
-App.Relationcontroller = Ember.ObjectController.extend({});
-App.register("controller:relation", App.Relationcontroller, { singleton: false });
+App.ParagraphContentView = Ember.View.extend({
+  tagName: "p",
+  mouseUp: function(e) {
+  }
+});
+
+App.RelationController = Ember.ObjectController.extend({});
+App.register("controller:relation", App.RelationController, { singleton: false });
 
 App.RelationView = Ember.View.extend({
   tagName: "canvas",
