@@ -11,24 +11,24 @@
         {{title}}
       {{/view}}
       {{#each contents}}
-        {{#view App.ParagraphView}}
+        {{#render "paragraph" this}}
           {{#each link in links}}
-            {{control "relation" link}}
-            {{control "story" link.dest}}
+            {{render "relation" link}}
+            {{render "story" link.dest}}
           {{/each}}
-          {{#view App.ParagraphContentView}}
-            {{relation this}}
-          {{/view}}
-        {{/view}}
+          {{render "paragraph-content" text}}
+        {{/render}}
       {{/each}}
     </script>
     <script type="text/x-handlebars">
-      {{control "story" App.storyRoot}}
+      {{render "story" App.storyRoot}}
     </script>
     <script>
+      /*
       var ENV = {
         EXPERIMENTAL_CONTROL_HELPER: true
       };
+      */
     </script>
     <script src="js/lib/jquery-1.9.1.js"></script>
     <script src="js/lib/handlebars-1.0.0-rc.4.js"></script>

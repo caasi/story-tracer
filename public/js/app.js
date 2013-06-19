@@ -10,6 +10,13 @@ App.ApplicationView = Ember.View.extend({
       App.movingView.original.window = null;
       App.movingView = null;
     }
+    /*
+    if (App.newLink) {
+      App.newLink.id = App.storyRoot.contents[0].links.length;
+      App.storyRoot.contents[0].links.pushObject(App.newLink);
+      App.newLink = null;
+    }
+    */
   },
   mouseMove: function(e) {
     if (App.movingView) {
@@ -26,9 +33,6 @@ App.ApplicationView = Ember.View.extend({
 });
 
 App.movingView = null;
-
-App.StoryController = Ember.ObjectController.extend({});
-App.register("controller:story", App.StoryController, { singleton: false });
 
 App.StoryView = Ember.View.extend({
   tagName: "div",
@@ -71,24 +75,18 @@ App.TitleView = Ember.View.extend({
  * if I use {{#each p in contents}} to wrap this helper,
  * I will get "p" as the path, but I can not get the string by
  * using Ember.get(this, path);
+ **
+ * This helper is generated dynamically by ParagraphContentView.
  */ 
-Ember.Handlebars.registerHelper("relation", function(path, options) {
-  var p, ret;
+Ember.Handlebars.registerHelper("relation-source", function(id, str) {
+  var ret;
 
-  p = Ember.get(this, path);
-  ret = p.text.slice();
-
-  p.links.forEach(function(link, index) {
-    var subString,
-        newString;
-    subString = p.text.substring(link.range.from, link.range.to);
-    newString = "<span class=\"capital relation-" + index + "\">" + subString.substring(0, 1) + "</span>" + subString.substring(1);
-    ret = ret.replace(
-      subString,
-      "<span class=\"relation-source\">" + newString + "</span>"
-    );
-  });
-
+  ret = "<span class=\"capital relation-" + id + "\">" +
+          str.substring(0, 1) +
+        "</span>" +
+        str.substring(1);
+  ret = "<span class=\"relation-source\">" + ret + "</span>";
+  
   return new Handlebars.SafeString(ret);
 });
 
@@ -96,19 +94,38 @@ App.ParagraphView = Ember.View.extend({});
 
 App.ParagraphContentView = Ember.View.extend({
   tagName: "p",
+  layout: function() {
+    var content,
+        links,
+        linkStrings,
+        template;
+
+    content = this.get("controller.model").slice();
+    links = this.get("parentView.controller.model.links");
+    
+    linkStrings = links.map(function(link) {
+      return content.substring(link.range.from, link.range.to);
+    });
+
+    Array.forEach(linkStrings, function(str, index) {
+      content = content.replace(str, "{{relation-source " + index + " \"" + str + "\" }}");
+    });
+
+    return Ember.Handlebars.compile(content);
+  }.property("parentView.controller.model.links.@each"),
+  linksChanged: function() {
+    this.rerender();
+  }.observes("parentView.controller.model.links.@each"),
   mouseUp: function(e) {
   }
 });
-
-App.RelationController = Ember.ObjectController.extend({});
-App.register("controller:relation", App.RelationController, { singleton: false });
 
 App.RelationView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["relation"],
   lineWidth: 5,
   $parent: null,
-  sourcePostion: null,
+  $story: null,
   canvasSpaceFromPoints: function(src, dest, margin) {
     var vector,
         abs,
@@ -156,57 +173,78 @@ App.RelationView = Ember.View.extend({
       }
     };
   },
-  update: function() {
-    var canvas = this.get("element"),
-        ctx = canvas.getContext("2d"),
-        x = this.get("controller.model.dest.position.x"),
-        y = this.get("controller.model.dest.position.y"),
-        width = this.$parent.find(".story").width(),
-        height = this.$parent.find(".story").height(),
-        space;
-
-    space = this.canvasSpaceFromPoints(
-      this.sourcePosition,
-      {
-        x: x + 0.5 * width,
-        y: y + 0.5 * height
-      }
-    );
-
-    canvas.width = space.size.width;
-    canvas.height = space.size.height;
-
-    this.$()
-      .css("left", space.origin.x + "px")
-      .css("top", space.origin.y + "px");
-
-    ctx.strokeStyle = "rgba(255, 0, 0, 0.66)";
-    ctx.lineWidth = this.lineWidth;
-    ctx.beginPath();
-    ctx.moveTo(space.start.x, space.start.y);
-    ctx.lineTo(space.end.x, space.end.y);
-    ctx.stroke();
-  },
-  didInsertElement: function() {
+  sourcePosition: function() {
     var id,
-        $relationSource,
-        parentPos,
-        pos;
+        pos,
+        $relationSource;
 
     id = this.get("controller.model.id");
-    this.$parent = this.get("parentView").$();
     $relationSource = this.$parent.find(".relation-" + id);
     pos = $relationSource.position();
-    
-    this.sourcePosition = {
+
+    return {
       x: pos.left + 0.5 * $relationSource.width(),
       y: pos.top + 0.5 * $relationSource.height()
     };
+  }.property("parentView.controller.model.links.@each"),
+  update: function() {
+    var canvas,
+        ctx,
+        x,
+        y,
+        $story,
+        width,
+        height,
+        space;
+
+    canvas = this.get("element");
+
+    if (canvas) {
+      ctx = canvas.getContext("2d");
+      x = this.get("controller.model.dest.position.x");
+      y = this.get("controller.model.dest.position.y");
+      width = this.$story.width();
+      height = this.$story.height();
+
+      space = this.canvasSpaceFromPoints(
+        this.get("sourcePosition"),
+        {
+          x: x + 0.5 * width,
+          y: y + 0.5 * height
+        }
+      );
+
+      canvas.width = space.size.width;
+      canvas.height = space.size.height;
+
+      this.set("x", space.origin.x);
+      this.set("y", space.origin.y);
+
+      ctx.strokeStyle = "rgba(255, 0, 0, 0.66)";
+      ctx.lineWidth = this.lineWidth;
+      ctx.beginPath();
+      ctx.moveTo(space.start.x, space.start.y);
+      ctx.lineTo(space.end.x, space.end.y);
+      ctx.stroke();
+    }
+  }.observes(
+    "controller.model.dest.position.x",
+    "controller.model.dest.position.y",
+    "relationSource"
+  ),
+  didInsertElement: function() {
+    this.$parent = this.get("parentView").$();
+    this.$story = this.$parent.find(".story");
 
     this.update();
-    this.addObserver("controller.model.dest.position.x", this.update);
-    this.addObserver("controller.model.dest.position.y", this.update);
-  }
+  },
+  attributeBindings: ["style"],
+  style: function() {
+    return "left: " + this.get("x") + "px;" +
+           "top: " + this.get("y") + "px;";
+  }.property("x", "y"),
+  x: 0,
+  y: 0
 });
 
 App.set(
@@ -215,10 +253,6 @@ App.set(
     position: {
       x: 700,
       y: 150
-    },
-    size: {
-      width: 300,
-      height: 450
     },
     title: "「沒5萬免存靠家裡」？戴勝益：期限3年",
     contents: [
@@ -232,10 +266,6 @@ App.set(
               position: {
                 x: -600,
                 y: 100
-              },
-              size: {
-                width: 300,
-                height: 450
               },
               title: "「月薪五萬說」爭議 戴勝益澄清",
               contents: [
@@ -263,10 +293,6 @@ App.set(
                 x: -500,
                 y: -100
               },
-              size: {
-                width: 300,
-                height: 450
-              },
               title: "有趣的看待戴勝益5萬說　徐旭東：最重要是增加國民所得",
               contents: [
                 {
@@ -283,5 +309,25 @@ App.set(
         links: []
       }
     ]
+  }
+);
+
+App.set(
+  "newLink",
+  {
+    range: { from: 14, to: 19 },
+    dest: {
+      position: {
+        x: 20,
+        y: 20
+      },
+      title: "New Story",
+      contents: [
+        {
+          text: "This is a new story.",
+          links: []
+        }
+      ],
+    }
   }
 );
