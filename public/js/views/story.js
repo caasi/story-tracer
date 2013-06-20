@@ -7,7 +7,6 @@ App.StoryView = Ember.View.extend({
         id;
     
     id = this.get("controller.model.id");
-    console.log(id);
 
     if (id !== undefined) {
       ret = "story-" + id;
