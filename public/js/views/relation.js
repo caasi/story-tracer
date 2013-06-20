@@ -56,7 +56,7 @@ App.RelationView = Ember.View.extend({
         pos,
         $relationSource;
 
-    id = this.get("controller.model.id");
+    id = this.get("controller.model.dest.id");
     $relationSource = this.$parent.find(".relation-" + id);
     pos = $relationSource.position();
 
@@ -111,8 +111,14 @@ App.RelationView = Ember.View.extend({
     "relationSource"
   ),
   didInsertElement: function() {
+    var id;
+
+    id = this.get("controller.model.dest.id");
+
     this.$parent = this.get("parentView").$();
-    this.$story = this.$parent.find(".story");
+    this.$story = this.$parent.find("> .story-" + id);
+
+    console.log(this.$story);
 
     this.update();
   },

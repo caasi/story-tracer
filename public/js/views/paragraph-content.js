@@ -24,18 +24,21 @@ App.ParagraphContentView = Ember.View.extend({
   layout: function() {
     var content,
         links,
-        linkStrings,
+        linkData,
         template;
 
     content = this.get("controller.model").slice();
     links = this.get("parentView.controller.model.links");
     
-    linkStrings = links.map(function(link) {
-      return content.substring(link.range.from, link.range.to);
+    linkData = links.map(function(link) {
+      return {
+        id: link.dest.id,
+        str: content.substring(link.range.from, link.range.to)
+      };
     });
 
-    Array.forEach(linkStrings, function(str, index) {
-      content = content.replace(str, "{{relation-source " + index + " \"" + str + "\" }}");
+    Array.forEach(linkData, function(data) {
+      content = content.replace(data.str, "{{relation-source " + data.id + " \"" + data.str + "\" }}");
     });
 
     return Ember.Handlebars.compile(content);
@@ -44,5 +47,22 @@ App.ParagraphContentView = Ember.View.extend({
     this.rerender();
   }.observes("parentView.controller.model.links.@each"),
   mouseUp: function(e) {
+    var sel,
+        range;
+       
+    sel = rangy.getSelection();
+    range = sel.getAllRanges()[0];
+
+    if (range.startOffset !== range.endOffset) {
+      console.log({
+        from: range.startOffset,
+        to: range.endOffset
+      });
+      if (range.startContainer !== range.endContainer) {
+        console.log("not in the same paragraph");
+      }
+      console.log(range.startContainer);
+      console.log(range.endContainer);
+    }
   }
 });
