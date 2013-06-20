@@ -1,12 +1,13 @@
 {
   "name": "story-tracer",
-  "version": "0.0.1",
+  "version": "0.0.20",
   "description": "A board that you can trace stories easily.",
   "main": "./src/server.js",
   "dependencies": {
     "express": "*",
     "livescript": "*",
-    "request": "*"
+    "request": "*",
+    "jquery": "*"
   },
   "devDependencies": {},
   "scripts": {
