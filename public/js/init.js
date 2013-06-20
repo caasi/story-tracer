@@ -10,8 +10,8 @@ App.getUID = function() {
 };
 App.getPosition = function() {
   return {
-    x: Math.floor(Math.random() * 300),
-    y: Math.floor(Math.random() * 150)
+    x: 100 + Math.floor(Math.random() * 300),
+    y: 100 + Math.floor(Math.random() * 150)
   }
 };
 
@@ -22,15 +22,19 @@ App.Story = Ember.Object.extend({
     y: 0
   },
   title: "This is a Title",
-  contents: [],
+  contents: null,
   init: function() {
     this.id = App.getUID();
+    this.contents = [];
   }
 });
 
 App.Paragraph = Ember.Object.extend({
   text: "This is some text.",
-  links: []
+  links: null,
+  init: function() {
+    this.links = [];
+  }
 });
 
 App.Link = Ember.Object.extend({
@@ -42,10 +46,9 @@ App.Link = Ember.Object.extend({
 });
 
 $.post("/story/", function(data) {
-  var story, stories, num, i, para, range, tail, len, link;
+  var story, stories, num, i, para, range, tail, len;
 
   story = App.Story.create({
-    position: App.getPosition(),
     title: data.title
   });
 
@@ -59,7 +62,6 @@ $.post("/story/", function(data) {
 
   App.set("storyRoot", story);
 
-  /*
   num = 3;
   tail = 0;
 
@@ -78,9 +80,9 @@ $.post("/story/", function(data) {
     }
     tail = range.to;
 
-    (function(range) {
+    (function(para, range) {
       $.post("/story/", function(data) {
-        var story, i;
+        var story, link, i;
 
         story = App.Story.create({
           position: App.getPosition(),
@@ -100,13 +102,10 @@ $.post("/story/", function(data) {
           dest: story
         });
 
-        console.log(link);
-
-        App.storyRoot.contents[para].links.pushObject(link);
+        App.storyRoot.contents.get(para).links.pushObject(link);
       });
-    }(range));
+    }(para, range));
   }
-  */
 
   App.advanceReadiness();
 });

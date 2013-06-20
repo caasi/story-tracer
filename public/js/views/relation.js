@@ -118,8 +118,6 @@ App.RelationView = Ember.View.extend({
     this.$parent = this.get("parentView").$();
     this.$story = this.$parent.find("> .story-" + id);
 
-    console.log(this.$story);
-
     this.update();
   },
   attributeBindings: ["style"],

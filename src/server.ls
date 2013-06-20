@@ -23,7 +23,7 @@ app
       limit: 10
     ret.title = body.sentences[0]
     body <- moretext do
-      n: 5
+      n: 3
       limit: 150
     ret.contents = body.sentences
     res.json ret
