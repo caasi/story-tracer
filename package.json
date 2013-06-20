@@ -13,7 +13,10 @@
     "prepublish": "./node_modules/.bin/lsc -cbo ./ src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:caasi/story-tracer.git"
+  },
   "author": "caasi Huang",
   "license": "MIT"
 }
