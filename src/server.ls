@@ -5,7 +5,6 @@ require! jquery
 $ = do jquery.create
 
 Story =
-  demoURL: \http://blogger.godfat.org/2013/06/blog-post.html
   getArticle: (url, cb) ->
     request.get(
       url
@@ -13,6 +12,12 @@ Story =
         if not err and res.statusCode is 200
           cb body
     )
+  checkSource: (body) ->
+    $body = $ body
+    if $body.find \.post-title .length and $body.find \.post-body .length
+      return \blogspot
+    if $body.find \.textpostbody .length
+      return \tumblr
   source:
     moretext: (cb) ->
       title <- Story.util.moretext do
@@ -30,12 +35,26 @@ Story =
       $title = $body.find \.post-title
       $contents = $body.find ".post-body p"
       $contents.each (index, element) ->
-        paragraphs = $(element).html()
-        paragraphs = paragraphs.replace /(<br \/>)\s*(<br \/>)+\s*/g \\u2029
-        paragraphs = paragraphs.replace /(<br \/>)\s*/g \\n
-        paragraphs = paragraphs.split \\u2029
-        Array.prototype.push.apply result, paragraphs
+        p = $ element .html()
+        p = p.replace /(<br \/>)\s*(<br \/>)+\s*/g \\u2029
+        p = p.replace /(<br \/>)\s*/g \\n
+        p = p.split \\u2029
+        Array.prototype.push.apply result, p
         if index is $contents.length - 1
+          cb do
+            title: $title.text().trim()
+            contents: result
+    tumblr: (body, cb) ->
+      result = []
+      $body = $ body
+      $contents = $body.find \.textpostbody .children()
+      result = [$contents.text()]
+      $title = $contents.prev \h2
+      $contents.each (index, element) ->
+        p = $ element .html()
+        result.push p
+        if index is $contents.length - 1
+          console.log result
           cb do
             title: $title.text().trim()
             contents: result
@@ -59,7 +78,7 @@ app
       res.json story
     else
       body <- Story.getArticle req.body.url
-      story <- Story.source.blogspot body
+      story <- Story.source[Story.checkSource body] body
       res.json story
   .listen 8080
 

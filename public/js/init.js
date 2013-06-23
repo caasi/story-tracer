@@ -47,7 +47,8 @@ App.Link = Ember.Object.extend({
 
 $.post(
   "/story/",
-  { url: "http://blogger.godfat.org/2013/06/blog-post.html" },
+  //{ url: "http://blogger.godfat.org/2013/06/blog-post.html" },
+  { url: "http://murmur.caasigd.org/post/52519795740/hackath3n" },
   function(data) {
     var story, stories, num, i, para, range, tail, len;
 
