@@ -12,11 +12,12 @@
       {{/view}}
       {{#each contents}}
         {{#render "paragraph" this}}
+          {{render "range" rects}}
           {{#each link in links}}
             {{render "relation" link}}
             {{render "story" link.dest}}
           {{/each}}
-          {{render "paragraph-content" text}}
+          {{render "paragraph-content" this viewName="contentView"}}
         {{/render}}
       {{/each}}
     </script>
@@ -40,6 +41,7 @@
     <script src="js/views/story.js"></script>
     <script src="js/views/title.js"></script>
     <script src="js/views/paragraph.js"></script>
+    <script src="js/views/range.js"></script>
     <script src="js/views/paragraph-content.js"></script>
     <script src="js/views/relation.js"></script>
   </body>

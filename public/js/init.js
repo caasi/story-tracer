@@ -32,8 +32,10 @@ App.Story = Ember.Object.extend({
 App.Paragraph = Ember.Object.extend({
   text: "This is some text.",
   links: null,
+  rects: null,
   init: function() {
     this.links = [];
+    this.rects = [];
   }
 });
 
@@ -42,13 +44,19 @@ App.Link = Ember.Object.extend({
     from: 0,
     to: 0
   },
+  //rects: null,
   dest: null
+  /*
+  init: function() {
+    this.rects = [];
+  }
+  */
 });
 
 $.post(
   "/story/",
-  //{ url: "http://blogger.godfat.org/2013/06/blog-post.html" },
-  { url: "http://murmur.caasigd.org/post/52519795740/hackath3n" },
+  { url: "http://blogger.godfat.org/2013/06/blog-post.html" },
+  //{ url: "http://murmur.caasigd.org/post/52519795740/hackath3n" },
   function(data) {
     var story, stories, num, i, para, range, tail, len;
 
@@ -74,7 +82,7 @@ $.post(
       len = story.contents[para].text.length;
       range = {
         from: tail + Math.floor(Math.random() * (len - tail)),
-        to: (tail + 1) + Math.floor(Math.random() * (len - tail - 1))
+        to: (tail + 1) + Math.floor(Math.random() * (len - tail))
       };
       if (range.from > range.to) {
         range = {

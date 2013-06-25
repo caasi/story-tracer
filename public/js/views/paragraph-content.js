@@ -10,11 +10,10 @@
 Ember.Handlebars.registerHelper("relation-source", function(id, str) {
   var ret;
 
-  ret = "<span class=\"capital relation-" + id + "\">" +
-          str.substring(0, 1) +
-        "</span>" +
-        str.substring(1);
-  ret = "<span class=\"relation-source\">" + ret + "</span>";
+  ret = Array.prototype.map.call(str, function(c, index) {
+    return "<span>" + c + "</span>";
+  });
+  ret = "<span class=\"relation-source relation-" + id + "\">" + ret.join("") + "</span>";
   
   return new Handlebars.SafeString(ret);
 });
@@ -27,8 +26,8 @@ App.ParagraphContentView = Ember.View.extend({
         linkData,
         template;
 
-    content = this.get("controller.model").slice();
-    links = this.get("parentView.controller.model.links");
+    content = this.get("controller.model.text").slice();
+    links = this.get("controller.model.links");
     
     linkData = links.map(function(link) {
       return {
@@ -42,10 +41,34 @@ App.ParagraphContentView = Ember.View.extend({
     });
 
     return Ember.Handlebars.compile(content);
-  }.property("parentView.controller.model.links.@each"),
+  }.property("controller.model.links.@each"),
   linksChanged: function() {
     this.rerender();
-  }.observes("parentView.controller.model.links.@each"),
+  }.observes("layout"),
+  didInsertElement: function() {
+    var $spans,
+        result;
+
+    $spans = this.$(".relation-source > span");
+    result = [];
+    
+    $spans.each(function(index) {
+      var $this,
+          pos;
+
+      $this = $(this);
+      pos = $this.position();
+
+      result.push({
+        x: pos.left,
+        y: pos.top,
+        width: $this.width(),
+        height: $this.height()
+      });
+    });
+
+    this.set("controller.model.rects", result);
+  },
   mouseUp: function(e) {
     var sel,
         range;

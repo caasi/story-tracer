@@ -52,9 +52,9 @@ Story =
       $title = $contents.prev \h2
       $contents.each (index, element) ->
         p = $ element .html()
+        console.log element.nodeName
         result.push p
         if index is $contents.length - 1
-          console.log result
           cb do
             title: $title.text().trim()
             contents: result

@@ -1,1 +1,3 @@
-App.ParagraphView = Ember.View.extend({});
+App.ParagraphView = Ember.View.extend({
+  classNames: ["paragraph"]
+});
