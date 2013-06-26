@@ -12,6 +12,7 @@ App.RangeView = Ember.View.extend({
         ctx,
         rects;
 
+    /* move canvas behind target paragraph */
     parentView = this.get("parentView");
     if (!parentView) return;
 
@@ -20,7 +21,7 @@ App.RangeView = Ember.View.extend({
 
     $p = $parent.find("> p");
     pos = $p.offset();
-    rects = this.get("controller.model");
+    rects = this.get("parentView.controller.model.rects");
     if (rects.length) {
       this.$().offset({
         left: pos.left - this.lineWidth,
@@ -31,24 +32,35 @@ App.RangeView = Ember.View.extend({
     canvas = this.get("element");
     canvas.width = $p.width() + 2 * this.lineWidth;
     canvas.height = $p.height() + 2 * this.lineWidth;
+
     ctx = canvas.getContext("2d");
     ctx.strokeStyle = "#FF9900";
     ctx.lineJoin = "round";
     ctx.lineWidth = this.lineWidth;
     ctx.fillStyle = "#FF9900";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
     
     that = this;
+    links = this.get("controller.model");
 
-    Array.forEach(rects, function(rect) {
-      ctx.beginPath();
-      ctx.rect(
-        rect.x + that.lineWidth,
-        rect.y + that.lineWidth,
-        rect.width,
-        rect.height
-      );
-      ctx.fill();
-      ctx.stroke();
+    Array.forEach(links, function(link) {
+      var i, rect;
+
+      for (i = link.range.from; i < link.range.to; ++i) {
+        rect = rects[i];
+
+        ctx.rect(
+          rect.x + that.lineWidth,
+          rect.y + that.lineWidth,
+          rect.width,
+          rect.height
+        );
+      }
     });
-  }.observes("controller.model")
+
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+  }.observes("controller.model.@each")
 });

@@ -2,7 +2,6 @@ App.RelationView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["relation"],
   lineWidth: 5,
-  $parent: null,
   $story: null,
   canvasSpaceFromPoints: function(src, dest, margin) {
     var vector,
@@ -52,25 +51,24 @@ App.RelationView = Ember.View.extend({
     };
   },
   sourcePosition: function() {
-    var id,
-        pos,
-        $relationSource;
+    var index,
+        rects,
+        rect;
 
-    id = this.get("controller.model.dest.id");
-    $relationSource = this.$parent.find(".relation-" + id);
-    pos = $relationSource.position();
+    index = this.get("controller.model.range.from");
+    rects = this.get("parentView.controller.model.rects");
+    rect = rects[index];
 
     return {
-      x: pos.left + 0.5 * $relationSource.width(),
-      y: pos.top + 0.5 * $relationSource.height()
+      x: rect.x + 0.5 * rect.width,
+      y: rect.y + 0.5 * rect.height
     };
-  }.property("parentView.controller.model.links.@each"),
+  }.property("controller.model.range.from", "parentView.controller.model.rects"),
   update: function() {
     var canvas,
         ctx,
         x,
         y,
-        $story,
         width,
         height,
         space;
@@ -109,15 +107,15 @@ App.RelationView = Ember.View.extend({
   }.observes(
     "controller.model.dest.position.x",
     "controller.model.dest.position.y",
-    "relationSource"
+    "sourcePosition"
   ),
   didInsertElement: function() {
-    var id;
+    var id, $parent;
 
     id = this.get("controller.model.dest.id");
 
-    this.$parent = this.get("parentView").$();
-    this.$story = this.$parent.find("> .story-" + id);
+    $parent = this.get("parentView").$();
+    this.$story = $parent.find("> .story-" + id);
 
     this.update();
   },

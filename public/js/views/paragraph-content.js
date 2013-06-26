@@ -4,52 +4,24 @@
  * if I use {{#each p in contents}} to wrap this helper,
  * I will get "p" as the path, but I can not get the string by
  * using Ember.get(this, path);
- **
- * This helper is generated dynamically by ParagraphContentView.
  */ 
-Ember.Handlebars.registerHelper("relation-source", function(id, str) {
-  var ret;
+Ember.Handlebars.registerBoundHelper("bound", function(text) {
+  var result;
 
-  ret = Array.prototype.map.call(str, function(c, index) {
+  result = Array.prototype.map.call(text, function(c, index) {
     return "<span>" + c + "</span>";
   });
-  ret = "<span class=\"relation-source relation-" + id + "\">" + ret.join("") + "</span>";
   
-  return new Handlebars.SafeString(ret);
+  return new Handlebars.SafeString(result.join(""));
 });
 
 App.ParagraphContentView = Ember.View.extend({
   tagName: "p",
-  layout: function() {
-    var content,
-        links,
-        linkData,
-        template;
-
-    content = this.get("controller.model.text").slice();
-    links = this.get("controller.model.links");
-    
-    linkData = links.map(function(link) {
-      return {
-        id: link.dest.id,
-        str: content.substring(link.range.from, link.range.to)
-      };
-    });
-
-    Array.forEach(linkData, function(data) {
-      content = content.replace(data.str, "{{relation-source " + data.id + " \"" + data.str + "\" }}");
-    });
-
-    return Ember.Handlebars.compile(content);
-  }.property("controller.model.links.@each"),
-  linksChanged: function() {
-    this.rerender();
-  }.observes("layout"),
   didInsertElement: function() {
     var $spans,
         result;
 
-    $spans = this.$(".relation-source > span");
+    $spans = this.$("> span");
     result = [];
     
     $spans.each(function(index) {

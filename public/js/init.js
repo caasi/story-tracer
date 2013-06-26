@@ -58,7 +58,7 @@ $.post(
   { url: "http://blogger.godfat.org/2013/06/blog-post.html" },
   //{ url: "http://murmur.caasigd.org/post/52519795740/hackath3n" },
   function(data) {
-    var story, stories, num, i, para, range, tail, len;
+    var story, stories, num, i, para, range, from;
 
     story = App.Story.create({
       title: data.title
@@ -80,17 +80,11 @@ $.post(
     for (i = 0; i < num; ++i) {
       para = Math.floor(Math.random() * story.contents.length);
       len = story.contents[para].text.length;
+      from = Math.floor(Math.random() * (len - 1));
       range = {
-        from: tail + Math.floor(Math.random() * (len - tail)),
-        to: (tail + 1) + Math.floor(Math.random() * (len - tail))
+        from: from,
+        to: from + 1 + Math.floor(Math.random() * (len - from - 1))
       };
-      if (range.from > range.to) {
-        range = {
-          from: range.to,
-          to: range.from
-        }
-      }
-      tail = range.to;
 
       (function(para, range) {
         $.post("/story/", function(data) {

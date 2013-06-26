@@ -35,36 +35,14 @@ body {
   padding: 0.25em;
 }
 
-.story p,
-.range {
-  margin: 0.5em 1em;
-  line-height: 1.5em;
-}
-
-.story p {
-  position: relative;
-  z-index: 3;
-}
-
-.range {
-  z-index: 2;
-}
-
 .paragraph {
   position: relative;
 }
 
-/*
-.capital,
-.relation-source {
-  border-radius: 3px;
-  background-color: #f00;
-  color: #fff;
-}
-*/
-
-.capital {
-  position: relative;
+.story p,
+.range {
+  margin: 0.5em 1em;
+  line-height: 1.5em;
 }
 
 .range,
@@ -80,10 +58,14 @@ body {
 
 .relation {
   z-index: 1;
+  margin-left: 1em;
 }
 
-/*
-.relation-source {
-  padding: 3px;
+.range {
+  z-index: 2;
 }
-*/
+
+.story p {
+  position: relative;
+  z-index: 3;
+}

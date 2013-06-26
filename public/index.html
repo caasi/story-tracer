@@ -12,12 +12,14 @@
       {{/view}}
       {{#each contents}}
         {{#render "paragraph" this}}
-          {{render "range" rects}}
+          {{render "range" links}}
           {{#each link in links}}
             {{render "relation" link}}
             {{render "story" link.dest}}
           {{/each}}
-          {{render "paragraph-content" this viewName="contentView"}}
+          {{#render "paragraph-content" this}}
+            {{bound text}}
+          {{/render}}
         {{/render}}
       {{/each}}
     </script>
