@@ -16,8 +16,9 @@ App.StoryView = Ember.View.extend({
   attributeBindings: ["style"],
   style: function() {
     return "left: " + this.get("controller.model.position.x") + "px;" +
-           "top: " + this.get("controller.model.position.y") + "px;";
-  }.property("controller.model.position.x", "controller.model.position.y"),
+           "top: " + this.get("controller.model.position.y") + "px;" +
+           "border-color: " + this.get("controller.model.color") + ";";
+  }.property("controller.model.position.x", "controller.model.position.y", "controller.mode.color"),
   original: {
     mouse: null,
     window: null

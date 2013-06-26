@@ -15,8 +15,20 @@ App.getPosition = function() {
   }
 };
 
+App.StoryColors = [
+  /* colors from http://flatuicolors.com/ */
+  "#1abc9c", //Turquoise
+  "#2ecc71", //Emerrald
+  "#3498db", //Peter River
+  "#9b59b6", //Amethyst
+  "#f1c40f", //Sun Flower
+  "#e67e22", //Carrot
+  "#e74c3c"  //Alizarin
+];
+
 App.Story = Ember.Object.extend({
   id: 0,
+  color: "",
   position: {
     x: 0,
     y: 0
@@ -25,6 +37,7 @@ App.Story = Ember.Object.extend({
   contents: null,
   init: function() {
     this.id = App.getUID();
+    this.color = App.StoryColors[Math.floor(Math.random() * App.StoryColors.length)];
     this.contents = [];
   }
 });

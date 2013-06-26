@@ -6,7 +6,7 @@ body {
   height: 100%;
   overflow: hidden;
   position: relative;
-  background: black;
+  background: #16161d; /* Eigengrau */
 }
 
 .app {
@@ -29,7 +29,6 @@ body {
   -o-user-select: none;
   user-select: none;
   cursor: move;
-  background-color: green;
   color: white;
   margin: 0;
   padding: 0.25em;

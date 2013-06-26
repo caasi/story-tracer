@@ -7,9 +7,9 @@
   </head>
   <body>
     <script type="text/x-handlebars" data-template-name="story">
-      {{#view App.TitleView}}
+      {{#render "title" this}}
         {{title}}
-      {{/view}}
+      {{/render}}
       {{#each contents}}
         {{#render "paragraph" this}}
           {{render "range" links}}

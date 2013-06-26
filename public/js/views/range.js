@@ -34,18 +34,19 @@ App.RangeView = Ember.View.extend({
     canvas.height = $p.height() + 2 * this.lineWidth;
 
     ctx = canvas.getContext("2d");
-    ctx.strokeStyle = "#FF9900";
     ctx.lineJoin = "round";
     ctx.lineWidth = this.lineWidth;
-    ctx.fillStyle = "#FF9900";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
     
     that = this;
     links = this.get("controller.model");
 
     Array.forEach(links, function(link) {
       var i, rect;
+
+      ctx.beginPath();
+      ctx.fillStyle = link.dest.color;
+      ctx.strokeStyle = link.dest.color;
 
       for (i = link.range.from; i < link.range.to; ++i) {
         rect = rects[i];
@@ -57,10 +58,11 @@ App.RangeView = Ember.View.extend({
           rect.height
         );
       }
+
+      ctx.fill();
+      ctx.stroke();
+      ctx.closePath();
     });
 
-    ctx.fill();
-    ctx.stroke();
-    ctx.closePath();
   }.observes("controller.model.@each")
 });

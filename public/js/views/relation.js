@@ -96,7 +96,7 @@ App.RelationView = Ember.View.extend({
       this.set("x", space.origin.x);
       this.set("y", space.origin.y);
 
-      ctx.strokeStyle = "#FF9900";
+      ctx.strokeStyle = this.get("controller.model.dest.color");
       ctx.lineCap = "round";
       ctx.lineWidth = this.lineWidth;
       ctx.beginPath();
