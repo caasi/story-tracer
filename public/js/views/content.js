@@ -15,7 +15,7 @@ Ember.Handlebars.registerBoundHelper("bound", function(text) {
   return new Handlebars.SafeString(result.join(""));
 });
 
-App.ParagraphContentView = Ember.View.extend({
+App.ContentView = Ember.View.extend({
   tagName: "p",
   didInsertElement: function() {
     var $spans,
