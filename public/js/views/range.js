@@ -21,7 +21,7 @@ App.RangeView = Ember.View.extend({
 
     $p = $parent.find("> p");
     pos = $p.offset();
-    rects = this.get("parentView.controller.model.rects");
+    rects = this.get("controller.model.rects");
     if (rects.length) {
       this.$().offset({
         left: pos.left - this.lineWidth,
@@ -39,7 +39,7 @@ App.RangeView = Ember.View.extend({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     that = this;
-    links = this.get("controller.model");
+    links = this.get("controller.model.links");
 
     Array.forEach(links, function(link) {
       var i, rect;
@@ -63,6 +63,5 @@ App.RangeView = Ember.View.extend({
       ctx.stroke();
       ctx.closePath();
     });
-
-  }.observes("controller.model.@each")
+  }.observes("controller.model.rects", "controller.model.links.@each")
 });

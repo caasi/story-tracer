@@ -2,7 +2,6 @@ App.RelationView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["relation"],
   lineWidth: 5,
-  $story: null,
   canvasSpaceFromPoints: function(src, dest, margin) {
     var vector,
         abs,
@@ -55,15 +54,17 @@ App.RelationView = Ember.View.extend({
         rects,
         rect;
 
-    index = this.get("controller.model.range.from");
+    index = this.get("controller.model.range.to") - 1;
     rects = this.get("parentView.controller.model.rects");
     rect = rects[index];
+
+    if (!rect) return undefined;
 
     return {
       x: rect.x + 0.5 * rect.width,
       y: rect.y + 0.5 * rect.height
     };
-  }.property("controller.model.range.from", "parentView.controller.model.rects"),
+  }.property("controller.model.range.to", "parentView.controller.model.rects"),
   update: function() {
     var canvas,
         ctx,
@@ -71,6 +72,7 @@ App.RelationView = Ember.View.extend({
         y,
         width,
         height,
+        src,
         space;
 
     canvas = this.get("element");
@@ -79,11 +81,15 @@ App.RelationView = Ember.View.extend({
       ctx = canvas.getContext("2d");
       x = this.get("controller.model.dest.position.x");
       y = this.get("controller.model.dest.position.y");
-      width = this.$story.width();
-      height = this.$story.height();
+      width = this.get("controller.model.dest.size.width");
+      height = this.get("controller.model.dest.size.height");
+
+      src = this.get("sourcePosition");
+
+      if (!src) return;
 
       space = this.canvasSpaceFromPoints(
-        this.get("sourcePosition"),
+        src,
         {
           x: x + 0.5 * width,
           y: y + 0.5 * height
@@ -107,16 +113,12 @@ App.RelationView = Ember.View.extend({
   }.observes(
     "controller.model.dest.position.x",
     "controller.model.dest.position.y",
+    "controller.model.dest.size.width",
+    "controller.model.dest.size.height",
+    "controller.model.dest.contents.@each",
     "sourcePosition"
   ),
   didInsertElement: function() {
-    var id, $parent;
-
-    id = this.get("controller.model.dest.id");
-
-    $parent = this.get("parentView").$();
-    this.$story = $parent.find("> .story-" + id);
-
     this.update();
   },
   attributeBindings: ["style"],

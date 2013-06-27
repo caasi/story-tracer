@@ -42,22 +42,49 @@ App.ContentView = Ember.View.extend({
     this.set("controller.model.rects", result);
   },
   mouseUp: function(e) {
-    var sel,
-        range;
+    var that,
+        sel,
+        range,
+        $spans,
+        result,
+        story,
+        link;
        
     sel = rangy.getSelection();
     range = sel.getAllRanges()[0];
 
-    if (range.startOffset !== range.endOffset) {
-      console.log({
-        from: range.startOffset,
-        to: range.endOffset
+    $spans = $(range.commonAncestorContainer).find("> span");
+
+    result = {
+      from: $spans.index($(range.startContainer).closest("span")),
+      to: $spans.index($(range.endContainer).closest("span")) + 1
+    };
+
+    if (result.from !== -1 && result.to !== -1) {
+      story = App.Story.create({
+        position: App.getPosition()
       });
-      if (range.startContainer !== range.endContainer) {
-        console.log("not in the same paragraph");
-      }
-      console.log(range.startContainer);
-      console.log(range.endContainer);
+
+      link = App.Link.create({
+        range: result,
+        dest: story
+      });
+
+      this.get("controller.model.links").pushObject(link);
+
+      $.post("/story/", function(data) {
+        story.set("title", data.title);
+
+        Array.forEach(data.contents, function(p) {
+          story.contents.pushObject(
+            App.Paragraph.create({
+              text: p
+            })
+          );
+        });
+      });
     }
+
+    sel.removeAllRanges();
   }
 });

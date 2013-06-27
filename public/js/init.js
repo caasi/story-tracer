@@ -1,4 +1,6 @@
-var App;
+var App,
+    story,
+    link;
 
 App = Ember.Application.create({});
 App.deferReadiness();
@@ -28,26 +30,33 @@ App.StoryColors = [
 
 App.Story = Ember.Object.extend({
   id: 0,
-  color: "",
-  position: {
-    x: 0,
-    y: 0
-  },
-  title: "This is a Title",
+  color: null,
+  position: null,
+  size: null,
+  title: "Loading...",
   contents: null,
   init: function() {
     this.id = App.getUID();
     this.color = App.StoryColors[Math.floor(Math.random() * App.StoryColors.length)];
-    this.contents = [];
+    this.position = this.position || {
+      x: 0,
+      y: 0
+    };
+    this.size = this.size || {
+      width: 0,
+      height: 0
+    };
+    this.contents = this.contents || [];
   }
 });
 
 App.Paragraph = Ember.Object.extend({
-  text: "This is some text.",
+  text: "loading...",
   links: null,
   rects: null,
   init: function() {
-    this.links = [];
+    this.links = this.links || [];
+    // it's not possible to have characters rects when initializing happening
     this.rects = [];
   }
 });
@@ -57,25 +66,21 @@ App.Link = Ember.Object.extend({
     from: 0,
     to: 0
   },
-  //rects: null,
   dest: null
-  /*
-  init: function() {
-    this.rects = [];
-  }
-  */
 });
+
+story = App.Story.create({});
+App.set("storyRoot", story);
+App.advanceReadiness();
 
 $.post(
   "/story/",
   //{ url: "http://blogger.godfat.org/2013/06/blog-post.html" },
   //{ url: "http://murmur.caasigd.org/post/52519795740/hackath3n" },
   function(data) {
-    var story, stories, num, i, para, range, from;
+    var num, i, para, range, from;
 
-    story = App.Story.create({
-      title: data.title
-    });
+    story.set("title", data.title);
 
     Array.forEach(data.contents, function(p) {
       story.contents.pushObject(
@@ -85,9 +90,7 @@ $.post(
       );
     });
 
-    App.set("storyRoot", story);
-
-    num = 3;
+    num = 2;
     tail = 0;
 
     for (i = 0; i < num; ++i) {
@@ -100,32 +103,31 @@ $.post(
       };
 
       (function(para, range) {
-        $.post("/story/", function(data) {
-          var story, link, i;
+        var story, link;
 
-          story = App.Story.create({
-            position: App.getPosition(),
-            title: data.title
-          });
+        story = App.Story.create({
+          position: App.getPosition()
+        });
+
+        link = App.Link.create({
+          range: range,
+          dest: story
+        });
+
+        $.post("/story/", function(data) {
+          story.set("title", data.title);
 
           Array.forEach(data.contents, function(p) {
-            story.contents.push(
+            story.contents.pushObject(
               App.Paragraph.create({
                 text: p
               })
             );
           });
-
-          link = App.Link.create({
-            range: range,
-            dest: story
-          });
-
-          App.storyRoot.contents.get(para).links.pushObject(link);
         });
+
+        App.storyRoot.contents.get(para).links.pushObject(link);
       }(para, range));
     }
-
-    App.advanceReadiness();
   }
 );

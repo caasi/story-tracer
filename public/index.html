@@ -12,7 +12,7 @@
       {{/render}}
       {{#each contents}}
         {{#render "paragraph" this}}
-          {{render "range" links}}
+          {{render "range" this}}
           {{#each link in links}}
             {{render "relation" link}}
             {{render "story" link.dest}}
