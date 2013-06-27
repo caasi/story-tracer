@@ -14,6 +14,10 @@
     "prepublish": "./node_modules/.bin/lsc -cbo ./ src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:caasi/story-tracer.git"
