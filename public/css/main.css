@@ -68,3 +68,7 @@ body {
   position: relative;
   z-index: 3;
 }
+
+.story p span {
+  display: inline-block;
+}
