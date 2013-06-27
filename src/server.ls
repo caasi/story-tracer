@@ -80,6 +80,6 @@ app
       body <- Story.getArticle req.body.url
       story <- Story.source[Story.checkSource body] body
       res.json story
-  .listen process.env.PORT or 8080
+  .listen(process.env.PORT or 8080)
 
 console.log \ready
