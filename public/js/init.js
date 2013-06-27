@@ -82,7 +82,7 @@ $.post(
 
     story.set("title", data.title);
 
-    Array.forEach(data.contents, function(p) {
+    data.contents.forEach(function(p) {
       story.contents.pushObject(
         App.Paragraph.create({
           text: p
@@ -117,7 +117,7 @@ $.post(
         $.post("/story/", function(data) {
           story.set("title", data.title);
 
-          Array.forEach(data.contents, function(p) {
+          data.contents.forEach(function(p) {
             story.contents.pushObject(
               App.Paragraph.create({
                 text: p

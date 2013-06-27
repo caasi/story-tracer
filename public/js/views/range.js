@@ -41,7 +41,7 @@ App.RangeView = Ember.View.extend({
     that = this;
     links = this.get("controller.model.links");
 
-    Array.forEach(links, function(link) {
+    links.forEach(function(link) {
       var i, rect;
 
       ctx.beginPath();
