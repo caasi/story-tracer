@@ -2,28 +2,18 @@ App.ApplicationView = Ember.View.extend({
   classNames: ["app"],
   mouseUp: function(e) {
     if (App.movingView) {
-      App.movingView.original.mouse = null;
-      App.movingView.original.window = null;
+      App.movingView.last.mouse = null;
       App.movingView = null;
     }
-    /*
-    if (App.newLink) {
-      App.newLink.id = App.storyRoot.contents[0].links.length;
-      App.storyRoot.contents[0].links.pushObject(App.newLink);
-      App.newLink = null;
-    }
-    */
   },
   mouseMove: function(e) {
     if (App.movingView) {
-      App.movingView.set(
-        "controller.model.position.x",
-        App.movingView.original.window.x + e.clientX - App.movingView.original.mouse.x
-      );
-      App.movingView.set(
-        "controller.model.position.y",
-        App.movingView.original.window.y + e.clientY - App.movingView.original.mouse.y
-      );
+      App.movingView.addSelfOffset({
+        x: e.clientX - App.movingView.last.mouse.x,
+        y: e.clientY - App.movingView.last.mouse.y
+      });
+      App.movingView.last.mouse.x = e.clientX;
+      App.movingView.last.mouse.y = e.clientY;
     }
   }
 });

@@ -11,14 +11,9 @@ App.TitleView = Ember.View.extend({
 
     App.movingView = parentView;
 
-    parentView.original.mouse = {
+    parentView.last.mouse = {
       x: e.clientX,
       y: e.clientY
-    };
-
-    parentView.original.window = {
-      x: parentView.get("controller.model.position.x"),
-      y: parentView.get("controller.model.position.y")
     };
   }
 });

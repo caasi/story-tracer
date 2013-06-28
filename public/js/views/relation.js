@@ -68,8 +68,7 @@ App.RelationView = Ember.View.extend({
   update: function() {
     var canvas,
         ctx,
-        x,
-        y,
+        pos,
         width,
         height,
         src,
@@ -79,8 +78,7 @@ App.RelationView = Ember.View.extend({
 
     if (canvas) {
       ctx = canvas.getContext("2d");
-      x = this.get("controller.model.dest.position.x");
-      y = this.get("controller.model.dest.position.y");
+      pos = this.get("controller.model.dest.position");
       width = this.get("controller.model.dest.size.width");
       height = this.get("controller.model.dest.size.height");
 
@@ -91,8 +89,8 @@ App.RelationView = Ember.View.extend({
       space = this.canvasSpaceFromPoints(
         src,
         {
-          x: x + 0.5 * width,
-          y: y + 0.5 * height
+          x: pos.x + 0.5 * width,
+          y: pos.y + 0.5 * height
         }
       );
 
@@ -111,8 +109,7 @@ App.RelationView = Ember.View.extend({
       ctx.stroke();
     }
   }.observes(
-    "controller.model.dest.position.x",
-    "controller.model.dest.position.y",
+    "controller.model.dest.position",
     "controller.model.dest.size.width",
     "controller.model.dest.size.height",
     "controller.model.dest.contents.@each",
