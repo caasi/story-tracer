@@ -61,7 +61,7 @@ App.RelationView = Ember.View.extend({
         rect;
 
     index = this.get("controller.model.range.to") - 1;
-    rects = this.get("parentView.controller.model.rects");
+    rects = this.get("parentView.controller.rects");
     rect = rects[index];
 
     if (!rect) return undefined;
@@ -70,7 +70,7 @@ App.RelationView = Ember.View.extend({
       x: rect.x + 0.5 * rect.width,
       y: rect.y + 0.5 * rect.height
     };
-  }.property("controller.model.range.to", "parentView.controller.model.rects"),
+  }.property("controller.model.range.to", "parentView.controller.rects"),
   update: function() {
     var canvas,
         ctx,

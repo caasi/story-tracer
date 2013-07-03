@@ -54,12 +54,8 @@ App.Story = Ember.Object.extend({
 App.Paragraph = Ember.Object.extend({
   text: "",
   links: null,
-  rects: null,
-  dimension: null,
   init: function() {
     this.links = this.links || [];
-    // it's not possible to have characters rects when initializing happening
-    this.rects = [];
   }
 });
 

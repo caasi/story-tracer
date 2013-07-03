@@ -26,7 +26,7 @@ App.ContentView = Ember.View.extend({
     $this = this.$();
     pos = $this.position();
 
-    this.set("controller.model.dimension", {
+    this.set("controller.dimension", {
       x: pos.left,
       y: pos.top,
       width: $this.width(),
@@ -51,7 +51,7 @@ App.ContentView = Ember.View.extend({
       });
     });
 
-    this.set("controller.model.rects", result);
+    this.set("controller.rects", result);
   },
   mouseUp: function(e) {
     var that,

@@ -18,8 +18,13 @@ App.RangeView = Ember.View.extend({
     canvas = this.get("element");
     if (!canvas) return;
 
-    dimension = this.get("controller.model.dimension");
-    rects = this.get("controller.model.rects");
+    /**
+     * what happened!?
+     **
+     * How can I get dimension and rects in story's controller?
+     */
+    dimension = this.get("controller.dimension");
+    rects = this.get("controller.rects");
 
     this.set("x", dimension.x - this.lineWidth);
     this.set("y", dimension.y - this.lineWidth);
@@ -58,7 +63,7 @@ App.RangeView = Ember.View.extend({
       ctx.closePath();
     });
   }.observes(
-    "controller.model.rects",
+    "controller.rects",
     "controller.model.links.@each"
   ),
   attributeBindings: ["style"],
