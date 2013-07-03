@@ -1,0 +1,13 @@
+{
+  "name": "story-tracer",
+  "version": "0.0.42",
+  "main": "public/index.html",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "ember": "1.0.0.rc.6",
+    "font-awesome": "*"
+  }
+}

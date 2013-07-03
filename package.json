@@ -1,16 +1,18 @@
 {
   "name": "story-tracer",
-  "version": "0.0.20",
+  "version": "0.0.42",
   "description": "A board that you can trace stories easily.",
   "main": "./src/server.js",
   "dependencies": {
     "express": "*",
     "LiveScript": "*",
     "request": "*",
-    "jquery": "*"
+    "jquery": "*",
+    "bower": "*"
   },
   "devDependencies": {},
   "scripts": {
+    "postinstall": "node_modules/.bin/bower install",
     "prepublish": "node_modules/.bin/lsc -cbo ./ src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
