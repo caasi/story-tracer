@@ -122,8 +122,10 @@ App.StoryView = Ember.View.extend({
     $this = this.$();
 
     if ($this) {
-      this.set("controller.model.size.width", $this.width());
-      this.set("controller.model.size.height", $this.height());
+      this.set("controller.model.size", {
+        width: $this.width(),
+        height: $this.height()
+      });
     }
 
     // rects change after all contents had been rendered

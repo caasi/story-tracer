@@ -33,7 +33,7 @@ App.Story = Ember.Object.extend({
   color: null,
   position: null,
   size: null,
-  title: "Loading...",
+  title: "",
   url: null,
   contents: null,
   init: function() {
@@ -52,7 +52,7 @@ App.Story = Ember.Object.extend({
 });
 
 App.Paragraph = Ember.Object.extend({
-  text: "loading...",
+  text: "",
   links: null,
   rects: null,
   dimension: null,
@@ -76,63 +76,3 @@ App.set("storyRoot", story);
 App.advanceReadiness();
 
 story.set("url", "*");
-/*
-$.post(
-  "/story/",
-  //{ url: "http://blogger.godfat.org/2013/06/blog-post.html" },
-  //{ url: "http://murmur.caasigd.org/post/52519795740/hackath3n" },
-  function(data) {
-    var num, i, para, range, from;
-
-    story.set("title", data.title);
-
-    data.contents.forEach(function(p) {
-      story.contents.pushObject(
-        App.Paragraph.create({
-          text: p
-        })
-      );
-    });
-
-    num = 2;
-    tail = 0;
-
-    for (i = 0; i < num; ++i) {
-      para = Math.floor(Math.random() * story.contents.length);
-      len = story.contents[para].text.length;
-      from = Math.floor(Math.random() * (len - 1));
-      range = {
-        from: from,
-        to: from + 1 + Math.floor(Math.random() * (len - from - 1))
-      };
-
-      (function(para, range) {
-        var story, link;
-
-        story = App.Story.create({
-          position: App.getPosition()
-        });
-
-        link = App.Link.create({
-          range: range,
-          dest: story
-        });
-
-        $.post("/story/", function(data) {
-          story.set("title", data.title);
-
-          data.contents.forEach(function(p) {
-            story.contents.pushObject(
-              App.Paragraph.create({
-                text: p
-              })
-            );
-          });
-        });
-
-        App.storyRoot.contents.get(para).links.pushObject(link);
-      }(para, range));
-    }
-  }
-);
-*/
