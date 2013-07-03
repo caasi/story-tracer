@@ -72,18 +72,15 @@ App.StoryView = Ember.View.extend({
 
     this._super();
   },
-  willUpdateURL: function() {
-    this.storyStates.transitionTo("busy");
-    this.oldURL = this.get("controller.model.url");
-  }.observesBefore("controller.model.url"),
   didUpdateURL: function() {
     var url,
         that;
 
-    url = this.get("controller.model.url");
-    console.log(this.oldURL + " -> " + url);
+    this.storyStates.transitionTo("busy");
 
-    if (url !== this.oldURL) {
+    url = this.get("controller.model.url");
+
+    if (url && url !== "") {
       this.set("controller.model.title", "");
       this.set("controller.model.contents", []);
 
