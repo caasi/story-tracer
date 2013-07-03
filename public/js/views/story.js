@@ -76,11 +76,11 @@ App.StoryView = Ember.View.extend({
     var url,
         that;
 
-    this.storyStates.transitionTo("busy");
-
     url = this.get("controller.model.url");
 
     if (url && url !== "") {
+      this.storyStates.transitionTo("busy");
+
       this.set("controller.model.title", "");
       this.set("controller.model.contents", []);
 

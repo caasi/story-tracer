@@ -29,22 +29,8 @@ body {
   color: white;
 }
 
-.story.creator > h1,
-.story.input > h1,
-.story.busy > h1 {
-}
-
 .story.creator {
   width: 40px;
-}
-
-.story.input {
-}
-
-.story.busy {
-}
-
-.story.paragragh {
 }
 
 .story > .creator,
@@ -53,6 +39,12 @@ body {
 .story > h1,
 .story > .paragraph {
   display: none;
+}
+
+.story > .creator,
+.story > .input,
+.story > .busy,
+.story > h1 {
   padding: 0.25em;
 }
 
@@ -76,18 +68,9 @@ body {
   display: block;
 }
 
-.story .creator {
-}
-
-.story .input {
-}
-
 .story .input input {
   font-size: 2em;
   width: 90%;
-}
-
-.story .busy {
 }
 
 .story h1 {
@@ -99,17 +82,17 @@ body {
   cursor: move;
   color: white;
   margin: 0;
-  padding: 0.25em;
 }
 
 .paragraph {
   position: relative;
+  margin: 0.5em;
 }
 
 .story p,
 .range,
 .relation {
-  margin: 0.5em 1em;
+  margin: 0 0.5em;
   line-height: 1.5em;
 }
 
