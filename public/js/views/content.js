@@ -18,8 +18,20 @@ Ember.Handlebars.registerBoundHelper("bound", function(text) {
 App.ContentView = Ember.View.extend({
   tagName: "p",
   didInsertElement: function() {
-    var $spans,
+    var $this,
+        pos,
+        $spans,
         result;
+
+    $this = this.$();
+    pos = $this.position();
+
+    this.set("controller.model.dimension", {
+      x: pos.left,
+      y: pos.top,
+      width: $this.width(),
+      height: $this.height()
+    });
 
     $spans = this.$("> span");
     result = [];
@@ -62,7 +74,8 @@ App.ContentView = Ember.View.extend({
 
     if (result.from !== -1 && result.to !== -1) {
       story = App.Story.create({
-        position: App.getPosition()
+        position: App.getPosition(),
+        url: "**"
       });
 
       link = App.Link.create({
@@ -71,18 +84,6 @@ App.ContentView = Ember.View.extend({
       });
 
       this.get("controller.model.links").pushObject(link);
-
-      $.post("/story/", function(data) {
-        story.set("title", data.title);
-
-        data.contents.forEach(function(p) {
-          story.contents.pushObject(
-            App.Paragraph.create({
-              text: p
-            })
-          );
-        });
-      });
     }
 
     sel.removeAllRanges();

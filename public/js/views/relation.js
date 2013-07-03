@@ -2,6 +2,12 @@ App.RelationView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["relation"],
   lineWidth: 5,
+  init: function() {
+    this.set("x", 0);
+    this.set("y", 0);
+
+    this._super();
+  },
   canvasSpaceFromPoints: function(src, dest, margin) {
     var vector,
         abs,
@@ -123,6 +129,4 @@ App.RelationView = Ember.View.extend({
     return "left: " + this.get("x") + "px;" +
            "top: " + this.get("y") + "px;";
   }.property("x", "y"),
-  x: 0,
-  y: 0
 });

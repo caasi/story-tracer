@@ -2,36 +2,30 @@ App.RangeView = Ember.View.extend({
   tagName: "canvas",
   classNames: ["range"],
   lineWidth: 3,
+  init: function() {
+    this.set("x", 0);
+    this.set("y", 0);
+
+    this._super();
+  },
   drawLinks: function() {
     var that,
-        parentView,
-        $parent,
-        $p,
-        pos,
+        dimension,
         canvas,
         ctx,
         rects;
 
-    /* move canvas behind target paragraph */
-    parentView = this.get("parentView");
-    if (!parentView) return;
-
-    $parent = this.get("parentView").$();
-    if (!$parent) return;
-
-    $p = $parent.find("> p");
-    pos = $p.offset();
-    rects = this.get("controller.model.rects");
-    if (rects.length) {
-      this.$().offset({
-        left: pos.left - this.lineWidth,
-        top: pos.top - this.lineWidth
-      });
-    }
-
     canvas = this.get("element");
-    canvas.width = $p.width() + 2 * this.lineWidth;
-    canvas.height = $p.height() + 2 * this.lineWidth;
+    if (!canvas) return;
+
+    dimension = this.get("controller.model.dimension");
+    rects = this.get("controller.model.rects");
+
+    this.set("x", dimension.x - this.lineWidth);
+    this.set("y", dimension.y - this.lineWidth);
+    
+    canvas.width = dimension.width + 2 * this.lineWidth;
+    canvas.height = dimension.height + 2 * this.lineWidth;
 
     ctx = canvas.getContext("2d");
     ctx.lineJoin = "round";
@@ -63,5 +57,13 @@ App.RangeView = Ember.View.extend({
       ctx.stroke();
       ctx.closePath();
     });
-  }.observes("controller.model.rects", "controller.model.links.@each")
+  }.observes(
+    "controller.model.rects",
+    "controller.model.links.@each"
+  ),
+  attributeBindings: ["style"],
+  style: function() {
+    return "left: " + this.get("x") + "px; " +
+           "top: " + this.get("y") + "px;";
+  }.property("x", "y")
 });

@@ -34,6 +34,7 @@ App.Story = Ember.Object.extend({
   position: null,
   size: null,
   title: "Loading...",
+  url: null,
   contents: null,
   init: function() {
     this.id = App.getUID();
@@ -54,6 +55,7 @@ App.Paragraph = Ember.Object.extend({
   text: "loading...",
   links: null,
   rects: null,
+  dimension: null,
   init: function() {
     this.links = this.links || [];
     // it's not possible to have characters rects when initializing happening
@@ -73,6 +75,8 @@ story = App.Story.create({});
 App.set("storyRoot", story);
 App.advanceReadiness();
 
+story.set("url", "*");
+/*
 $.post(
   "/story/",
   //{ url: "http://blogger.godfat.org/2013/06/blog-post.html" },
@@ -131,3 +135,4 @@ $.post(
     }
   }
 );
+*/

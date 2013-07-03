@@ -3,10 +3,23 @@
   <head>
     <title>Story Tracer</title>
     <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <!--[if IE 7]>
+      <link rel="stylesheet" href="css/font-awesome-ie7.min.css">
+    <![endif]-->
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body>
     <script type="text/x-handlebars" data-template-name="story">
+      {{#view App.CreatorView}}
+        <i class="icon-plus icon-2x"></i>
+      {{/view}}
+      {{#view App.InputView}}
+        <input type="input"></input>
+      {{/view}}
+      {{#view App.BusyView}}
+        <i class="icon-refresh icon-spin icon-2x"></i>
+      {{/view}}
       {{#render "title" this}}
         {{title}}
       {{/render}}
@@ -35,12 +48,15 @@
     </script>
     <script src="js/lib/jquery-1.9.1.js"></script>
     <script src="js/lib/handlebars-1.0.0-rc.4.js"></script>
-    <script src="js/lib/ember-1.0.0-rc.5.js"></script>
+    <script src="js/lib/ember-1.0.0-rc.6.js"></script>
     <script src="js/lib/ember-data-0.13.js"></script>
     <script src="js/lib/rangy-1.2.3/rangy-core.js"></script>
     <script src="js/init.js"></script>
     <script src="js/views/application.js"></script>
     <script src="js/views/story.js"></script>
+    <script src="js/views/creator.js"></script>
+    <script src="js/views/input.js"></script>
+    <script src="js/views/busy.js"></script>
     <script src="js/views/title.js"></script>
     <script src="js/views/paragraph.js"></script>
     <script src="js/views/range.js"></script>

@@ -1,7 +1,7 @@
 App.StoryView = Ember.View.extend({
   tagName: "div",
   classNames: ["story"],
-  classNameBindings: ["storyID"],
+  classNameBindings: ["storyID", "storyState"],
   storyID: function() {
     var ret,
         id;
@@ -13,16 +13,99 @@ App.StoryView = Ember.View.extend({
       return ret;
     }
   }.property("parentView.controller.model.id"),
+  storyState: function() {
+    return this.get("storyStates.currentState.name");
+  }.property("storyStates.currentState"),
+  backgroundColor: function() {
+    return this.get("storyState") === "article" ?
+            "#FFF" :
+            this.get("controller.model.color");
+  }.property("storyState"),
   attributeBindings: ["style"],
   style: function() {
     return "left: " + this.get("controller.model.position.x") + "px;" +
            "top: " + this.get("controller.model.position.y") + "px;" +
-           "border-color: " + this.get("controller.model.color") + ";";
-  }.property("controller.model.position", "controller.model.color"),
+           "border-color: " + this.get("controller.model.color") + ";" +
+           "background-color: " + this.get("backgroundColor");
+  }.property("controller.model.position", "controller.model.color", "backgroundColor"),
   init: function() {
+    var that = this;
+
     this.childStoryViews = [];
+    this.storyStates = Ember.StateManager.create({
+      initialState: "creator",
+      states: {
+        creator: Ember.State.create({
+          enter: function() {
+            console.log("enter creator mode"); 
+          },
+          exit: function() {
+            console.log("leave creator mode");
+          }
+        }),
+        input: Ember.State.create({
+          enter: function() {
+            console.log("enter input mode");
+          },
+          exit: function() {
+            console.log("leave input mode");
+          }
+        }),
+        busy: Ember.State.extend({
+          enter: function() {
+            console.log("enter busy mode");
+          },
+          exit: function() {
+            console.log("leave busy mode");
+          }
+        }),
+        article: Ember.State.create({
+          enter: function() {
+            console.log("enter story mode");
+          },
+          exit: function() {
+            console.log("leave story mode");
+          }
+        })
+      }
+    });
+
     this._super();
   },
+  willUpdateURL: function() {
+    this.storyStates.transitionTo("busy");
+    this.oldURL = this.get("controller.model.url");
+  }.observesBefore("controller.model.url"),
+  didUpdateURL: function() {
+    var url,
+        that;
+
+    url = this.get("controller.model.url");
+    console.log(this.oldURL + " -> " + url);
+
+    if (url !== this.oldURL) {
+      this.set("controller.model.title", "");
+      this.set("controller.model.contents", []);
+
+      that = this;
+
+      $.post("/story/", function(data) {
+        var contents = that.get("controller.model.contents");
+
+        that.storyStates.transitionTo("article");
+
+        that.set("controller.model.title", data.title);
+
+        data.contents.forEach(function(p) {
+          contents.pushObject(
+            App.Paragraph.create({
+              text: p
+            })
+          );
+        });
+      });
+    }
+  }.observes("controller.model.url"),
   didInsertElement: function() {
     var model,
         id,
@@ -76,6 +159,7 @@ App.StoryView = Ember.View.extend({
   },
   parentStoryView: undefined,
   childStoryViews: undefined,
+  storyStates: undefined,
   last: {
     mouse: null,
   }
