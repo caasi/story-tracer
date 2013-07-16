@@ -68,6 +68,10 @@ body {
   display: block;
 }
 
+.story > .creator {
+  cursor: pointer;
+}
+
 .story .input input {
   font-size: 2em;
   width: 90%;

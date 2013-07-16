@@ -58,6 +58,8 @@ App.ContentView = Ember.View.extend({
         sel,
         range,
         $spans,
+        $endSpan,
+        pos,
         result,
         story,
         link;
@@ -66,16 +68,20 @@ App.ContentView = Ember.View.extend({
     range = sel.getAllRanges()[0];
 
     $spans = $(range.commonAncestorContainer).find("> span");
+    $endSpan = $(range.endContainer).closest("span");
+    pos = $endSpan.position();
 
     result = {
       from: $spans.index($(range.startContainer).closest("span")),
-      to: $spans.index($(range.endContainer).closest("span")) + 1
+      to: $spans.index($endSpan) + 1
     };
 
     if (result.from !== -1 && result.to !== -1) {
       story = App.Story.create({
-        position: App.getPosition(),
-        url: "**"
+        position: {
+          x: pos.left + 2 * $endSpan.width(),
+          y: pos.top + $endSpan.height()
+        }
       });
 
       link = App.Link.create({

@@ -46,9 +46,13 @@ App.StoryView = Ember.View.extend({
         input: Ember.State.create({
           enter: function() {
             console.log("enter input mode");
+            setTimeout(function() {
+              that.$("input").focus();
+            }, 0);
           },
           exit: function() {
             console.log("leave input mode");
+            that.$("input").blur();
           }
         }),
         busy: Ember.State.extend({
@@ -72,7 +76,7 @@ App.StoryView = Ember.View.extend({
 
     this._super();
   },
-  didUpdateURL: function() {
+  getContent: function() {
     var url,
         that;
 
@@ -86,7 +90,7 @@ App.StoryView = Ember.View.extend({
 
       that = this;
 
-      $.post("/story/", function(data) {
+      $.post("/story/", { url: url }, function(data) {
         var contents = that.get("controller.model.contents");
 
         that.storyStates.transitionTo("article");
@@ -102,7 +106,7 @@ App.StoryView = Ember.View.extend({
         });
       });
     }
-  }.observes("controller.model.url"),
+  },
   didInsertElement: function() {
     var model,
         id,

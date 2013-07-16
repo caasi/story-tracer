@@ -10,12 +10,14 @@ App.uid = 0;
 App.getUID = function() {
   return App.uid++;
 };
+/*
 App.getPosition = function() {
   return {
     x: 100 + Math.floor(Math.random() * 300),
     y: 100 + Math.floor(Math.random() * 150)
   }
 };
+*/
 
 App.StoryColors = [
   /* colors from http://flatuicolors.com/ */
@@ -34,7 +36,7 @@ App.Story = Ember.Object.extend({
   position: null,
   size: null,
   title: "",
-  url: null,
+  url: "",
   contents: null,
   init: function() {
     this.id = App.getUID();
@@ -71,4 +73,4 @@ story = App.Story.create({});
 App.set("storyRoot", story);
 App.advanceReadiness();
 
-story.set("url", "*");
+//story.set("url", "*");

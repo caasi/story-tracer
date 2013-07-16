@@ -15,7 +15,7 @@
         <i class="icon-plus icon-2x"></i>
       {{/view}}
       {{#view App.InputView}}
-        <input type="input"></input>
+        {{view Ember.TextField valueBinding="url"}}
       {{/view}}
       {{#view App.BusyView}}
         <i class="icon-refresh icon-spin icon-2x"></i>

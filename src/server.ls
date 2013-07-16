@@ -6,20 +6,29 @@ $ = do jquery.create
 
 Story =
   getArticle: (url, cb) ->
-    request.get(
-      url
-      (err, res, body) ->
-        if not err and res.statusCode is 200
-          cb body
-    )
+    if not url
+      do cb
+    else
+      request.get(
+        do
+          url: url
+          timeout: 2000
+        (err, res, body) ->
+          if err
+            console.log err
+            do cb
+          else if res.statusCode is 200
+            cb body
+      )
   checkSource: (body) ->
     $body = $ body
     if $body.find \.post-title .length and $body.find \.post-body .length
       return \blogspot
     if $body.find \.textpostbody .length
       return \tumblr
+    \moretext
   source:
-    moretext: (cb) ->
+    moretext: (body, cb) ->
       title <- Story.util.moretext do
         n: 1
         limit: 10
@@ -73,13 +82,9 @@ app
   .use express.methodOverride!
   .use express.static __dirname + \/public
   .post \/story, (req, res) ->
-    if req.body.url is void
-      story <- Story.source.moretext
-      res.json story
-    else
-      body <- Story.getArticle req.body.url
-      story <- Story.source[Story.checkSource body] body
-      res.json story
+    body <- Story.getArticle req.body.url
+    story <- Story.source[Story.checkSource body] body
+    res.json story
   .listen(process.env.PORT or 8080)
 
 console.log \ready
