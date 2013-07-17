@@ -9,9 +9,9 @@ Ember.Handlebars.registerBoundHelper("bound", function(text) {
   var result;
 
   result = Array.prototype.map.call(text, function(c, index) {
-    return "<span>" + c === " " ? "&nbsp;" : c + "</span>";
+    return "<span>" + (c === " " ? "&nbsp;" : c) + "</span>";
   });
-  
+
   return new Handlebars.SafeString(result.join(""));
 });
 
