@@ -1,6 +1,6 @@
 {
   "name": "story-tracer",
-  "version": "0.0.42",
+  "version": "0.0.44",
   "main": "public/index.html",
   "ignore": [
     ".jshintrc",

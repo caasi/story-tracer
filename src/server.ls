@@ -1,8 +1,6 @@
 require! request
 require! express
-require! jquery
-
-$ = do jquery.create
+require! cheerio
 
 Story =
   getArticle: (url, cb) ->
@@ -20,15 +18,14 @@ Story =
           else if res.statusCode is 200
             cb body
       )
-  checkSource: (body) ->
-    $body = $ body
-    if $body.find \.post-title .length and $body.find \.post-body .length
+  checkSource: ($) ->
+    if $ \.post-title .length and $ \.post-body .length
       return \blogspot
-    if $body.find \.textpostbody .length
+    if $ \.textpostbody .length
       return \tumblr
     \moretext
   source:
-    moretext: (body, cb) ->
+    moretext: ($, cb) ->
       title <- Story.util.moretext do
         n: 1
         limit: 10
@@ -38,29 +35,27 @@ Story =
       cb do
         title: title.sentences[0]
         contents: contents.sentences
-    blogspot: (body, cb) ->
+    blogspot: ($, cb) ->
       result = []
-      $body = $ body
-      $title = $body.find \.post-title
-      $contents = $body.find ".post-body p"
+      $title = $ \.post-title
+      $contents = $ ".post-body p"
       $contents.each (index, element) ->
-        p = $ element .html()
-        p = p.replace /(<br \/>)\s*(<br \/>)+\s*/g \\u2029
-        p = p.replace /(<br \/>)\s*/g \\n
+        p = $ element .text()
+        p = p.replace /\n\s*\n+\s*/g \\u2029
+        p = p.replace /\n\s*/g \\n
         p = p.split \\u2029
         Array.prototype.push.apply result, p
         if index is $contents.length - 1
           cb do
             title: $title.text().trim()
             contents: result
-    tumblr: (body, cb) ->
+    tumblr: ($, cb) ->
       result = []
-      $body = $ body
-      $contents = $body.find \.textpostbody .children()
+      $contents = $ \.textpostbody .children()
       result = [$contents.text()]
       $title = $contents.prev \h2
       $contents.each (index, element) ->
-        p = $ element .html()
+        p = $ element .text()
         console.log element.nodeName
         result.push p
         if index is $contents.length - 1
@@ -83,7 +78,8 @@ app
   .use express.static __dirname + \/public
   .post \/story, (req, res) ->
     body <- Story.getArticle req.body.url
-    story <- Story.source[Story.checkSource body] body
+    $ = cheerio.load body
+    story <- Story.source[Story.checkSource $] $
     res.json story
   .listen(process.env.PORT or 8080)
 
