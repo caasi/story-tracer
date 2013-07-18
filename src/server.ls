@@ -3,21 +3,47 @@ require! express
 require! entities
 require! cheerio
 
-html2json = (node) ->
-  if node.type is \tag
-    children = node.children?
-                .map html2json
-                .filter (child) ->
-                  child.type is \text or child.children.length
-    return do
-      type: node.type
-      name: node.name
-      children: children
-  else
-    return do
-      type: node.type
-      # FB55's node-entities, 0 = XML, 1 = HTML4, 2 = HTML5
-      data: entities.decode node.data, 2
+html2json = ($, $node) ->
+  node = $node[0]
+  switch
+  | node.type is \tag and node.name is \span =>
+    type: \text
+    data: $node.text()
+  | node.type is \tag =>
+    concated = []
+    children =
+      node.children
+        .filter (e) ->
+          # I only want tag and text nodes
+          e.type is \text or e.type is \tag
+        .map (e) ->
+          # cheerio fails at some weird case
+          html2json $, $ e
+        .filter (e) ->
+          e.type isnt \tag or e.children.length
+    i = 0
+    while i < children.length
+      concated.push children[i]
+      if children[i].type is \text
+        j = i + 1
+        while j < children.length
+          break if children[j].type isnt \text
+          children[i].data += children[j].data
+          j = j + 1
+        i = j
+      else
+        i = i + 1
+    type: node.type
+    name: node.name
+    children: concated
+  | node.type is \text =>
+    type: node.type
+    # FB55's node-entities, 0 = XML, 1 = HTML4, 2 = HTML5
+    data: entities.decode node.data, 2
+  | otherwise =>
+    console.log "oops:"
+    console.log node
+    type: \unknown
 
 Story =
   getArticle: (url, cb) ->
@@ -54,7 +80,7 @@ Story =
       result = []
       $title = $ \.post-title
       $contents = $ ".post-body p"
-      #console.log JSON.stringify Story.util.html2json $(\.post-body)[0]
+      console.log JSON.stringify Story.util.html2json $, $ \.post-body
       next = ->
         cb do
           title: $title.text().trim()
