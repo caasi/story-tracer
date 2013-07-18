@@ -38,7 +38,7 @@ Story =
       result = []
       $title = $ \.post-title
       $contents = $ ".post-body p"
-      console.log Story.util.html2json $, $ \.post-body
+      console.log JSON.stringify Story.util.html2json($(\.post-body)[0]), null, " "
       next = ->
         cb do
           title: $title.text().trim()

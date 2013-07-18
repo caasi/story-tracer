@@ -1,22 +1,20 @@
-html2json = ($, $node) ->
-  node = $node[0]
+require! entities
+require! cheerio
+
+html2json = (node) ->
   switch
   | node.type is \tag and node.name is \span =>
     type: \text
-    data: $node.text()
+    data: cheerio.text([node]) # text() needs an array
   | node.type is \tag =>
     concated = []
     children =
-      $node.children()
-        .filter (i, e) ->
-          console.log e
-          # I only want tag and text nodes
-          e.type is \text or e.type is \tag
-        .map (i, e) ->
-          # cheerio fails if I don't use $.chilren()
-          html2json $, $ e
+      node.children
         .filter (e) ->
-          e.type isnt \tag or e.children.length
+          # I only want tag and text nodes now
+          e.type is \text or (e.type is \tag and e.children.length isnt 0)
+        .map html2json
+    # concat text nodes
     i = 0
     while i < children.length
       concated.push children[i]
