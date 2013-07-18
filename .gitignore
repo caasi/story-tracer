@@ -1,3 +1,3 @@
 node_modules/
 *.swp
-/server.js
+/*.js
