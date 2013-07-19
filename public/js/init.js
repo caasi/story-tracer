@@ -10,6 +10,29 @@ App.uid = 0;
 App.getUID = function() {
   return App.uid++;
 };
+App.HTMLFromStoryDOM = function(node) {
+  var result = "";
+  if (node && node.type === "tag") {
+    result += "<" + node.name + ">";
+    node.children.forEach(function(e) {
+      result += App.HTMLFromStoryDOM(e);
+    });
+    result += "</" + node.name + ">";
+  }
+  if (node && node.type === "text") {
+    result = Array.prototype.map.call(node.data, function(c) {
+      switch(c) {
+        case " ":
+          return "<span>&nbsp;</span>";
+        case "\n":
+          return "<br />";
+        default:
+          return "<span>" + c + "</span>";
+      }
+    }).join("");
+  }
+  return result;
+};
 /*
 App.getPosition = function() {
   return {
@@ -36,6 +59,7 @@ App.Story = Ember.Object.extend({
   position: null,
   size: null,
   title: "",
+  dom: null,
   url: "",
   contents: null,
   init: function() {

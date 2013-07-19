@@ -31,10 +31,11 @@
             {{render "story" link.dest}}
           {{/each}}
           {{#render "content" this}}
-            {{bound text}}
+            {{! bound text}}
           {{/render}}
         {{/render}}
       {{/each}}
+      {{story-dom dom}}
     </script>
     <script type="text/x-handlebars">
       {{render "story" App.storyRoot}}

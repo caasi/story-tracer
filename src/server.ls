@@ -38,11 +38,11 @@ Story =
       result = []
       $title = $ \.post-title
       $contents = $ ".post-body p"
-      console.log JSON.stringify Story.util.html2json($(\.post-body)[0]), null, " "
       next = ->
         cb do
           title: $title.text().trim()
           contents: result
+          dom: Story.util.html2json $(\.post-body)[0]
       $contents.each (index, element) ->
         p = $ element .text()
         p = p.replace /\n\s*\n+\s*/g \\u2029
@@ -65,6 +65,7 @@ Story =
           cb do
             title: $title.text().trim()
             contents: result
+            dom: Story.util.html2json $(\.textpostbody)[0]
   util:
     moretext: (options, cb) ->
       request.get(

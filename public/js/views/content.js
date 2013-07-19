@@ -15,6 +15,10 @@ Ember.Handlebars.registerBoundHelper("bound", function(text) {
   return new Handlebars.SafeString(result.join(""));
 });
 
+Ember.Handlebars.registerBoundHelper("story-dom", function(dom) {
+  return new Handlebars.SafeString(App.HTMLFromStoryDOM(dom));
+});
+
 App.ContentView = Ember.View.extend({
   tagName: "p",
   didInsertElement: function() {

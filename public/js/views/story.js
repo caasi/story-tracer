@@ -104,6 +104,8 @@ App.StoryView = Ember.View.extend({
             })
           );
         });
+
+        that.set("controller.model.dom", data.dom);
       });
     }
   },

@@ -1,6 +1,6 @@
 {
   "name": "story-tracer",
-  "version": "0.0.47",
+  "version": "0.0.51",
   "description": "A board that you can trace stories easily.",
   "main": "./src/server.js",
   "dependencies": {
